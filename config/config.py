@@ -13,4 +13,4 @@ def load_config():
 
 
 cfg = load_config()
-logger.setLevel(cfg["log_level"])
+logger.setLevel("DEBUG")
