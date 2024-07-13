@@ -2,9 +2,9 @@ import asyncio
 import logging
 
 from config.config import cfg
-from app.handler import route
+from app.handlers.start import start_route
 from aiogram import Bot, Dispatcher
-
+from app.handlers.register import register_route
 
 
 async def main():
@@ -15,7 +15,8 @@ async def main():
     dp = Dispatcher()
     logging.debug("Start polling")
     
-    dp.include_router(route)
+    dp.include_router(start_route)
+    dp.include_router(register_route)
     
     await dp.start_polling(bot)
 
