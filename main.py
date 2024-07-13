@@ -5,12 +5,14 @@ from config.config import cfg
 from app.handler import route
 from aiogram import Bot, Dispatcher
 
-# Объект бота
-bot = Bot(token=cfg["token"])
-# Диспетчер
-dp = Dispatcher()
+
 
 async def main():
+    logging.basicConfig(level=logging.DEBUG)
+    # Объект бота
+    bot = Bot(token=cfg["token"])
+    # Диспетчер
+    dp = Dispatcher()
     logging.debug("Start polling")
     dp.include_router(route)
     await dp.start_polling(bot)
