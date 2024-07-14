@@ -8,7 +8,7 @@ from app.handlers.register import register_route
 
 
 async def main():
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=cfg["log_level"])
     # Объект бота
     bot = Bot(token=cfg["token"])
     # Диспетчер

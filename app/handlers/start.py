@@ -13,7 +13,3 @@ async def cmd_start(message: types.Message):
                          parse_mode="html", reply_markup=registred_button)    
     #TODO: Добавить проверку на регистрацию пользователя. Если такого нет в базе данных, регистрировать его
 
-
-# @start_route.message()
-# async def echo(message: types.Message):
-#     await message.answer(message.text)
