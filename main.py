@@ -5,7 +5,7 @@ from config.config import cfg
 from app.handlers.start import start_route
 from aiogram import Bot, Dispatcher
 from app.handlers.register import register_route
-
+from database.database import engine
 
 async def main():
     logging.basicConfig(level=logging.DEBUG)
@@ -19,6 +19,7 @@ async def main():
     dp.include_router(register_route)
     
     await dp.start_polling(bot)
+    
 
 if __name__ == "__main__":
     asyncio.run(main())
