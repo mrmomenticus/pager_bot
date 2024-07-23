@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import text
 from cyberpunk_pager import configs
 
-engine = create_async_engine(configs.cfg["database"], echo=True # type: ignore
+engine = create_async_engine(configs.cfg["url_database"], echo=True # type: ignore
 )
 
 
