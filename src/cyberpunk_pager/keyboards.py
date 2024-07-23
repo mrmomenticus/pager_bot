@@ -1,4 +1,4 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 
 registred_button = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Зарегистрироваться')]],

@@ -1,4 +1,3 @@
-
 import yaml
 
 def load_config():
@@ -8,7 +7,6 @@ def load_config():
         return config
     except Exception as e:
         print(f"Error loading config: {e}")
-        return None
 
 
 cfg = load_config()
