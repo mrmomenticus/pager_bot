@@ -17,9 +17,9 @@ async def main():
 
     dp.include_router(start.start_route)
     dp.include_router(register.register_route)
-    
+
     await orm.insert_data()
-    
+
     await dp.start_polling(bot)
     
     
