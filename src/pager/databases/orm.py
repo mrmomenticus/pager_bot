@@ -1,5 +1,5 @@
+from pager.databases.core import Worker, async_session_factory, init_table
 
-from cyberpunk_pager.databases.core import Worker, async_session_factory, init_table
 
 async def insert_data():
     await init_table()

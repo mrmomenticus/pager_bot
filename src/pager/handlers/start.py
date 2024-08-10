@@ -1,6 +1,6 @@
 from aiogram import Router, types
 from aiogram.filters.command import CommandStart
-from cyberpunk_pager import keyboards
+from pager import keyboards
 
 
 start_route = Router()

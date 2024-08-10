@@ -1,5 +1,5 @@
 from aiogram.fsm.context import FSMContext
-from cyberpunk_pager import states
+from pager import states
 
 import logging
 from aiogram import F, Router, types
