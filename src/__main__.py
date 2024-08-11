@@ -4,7 +4,7 @@ import logging
 from pager import configs
 from aiogram import Bot, Dispatcher
 from pager.handlers import register, start
-from pager.databases import orm
+from pager.databases import core
 
 
 async def main():
@@ -18,7 +18,8 @@ async def main():
     dp.include_router(start.start_route)
     dp.include_router(register.register_route)
 
-    await orm.insert_data()
+
+    await core.init_database()
 
     await dp.start_polling(bot)
 
