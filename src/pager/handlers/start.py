@@ -8,7 +8,7 @@ start_route = Router()
 
 @start_route.message(CommandStart())
 async def cmd_start(message: types.Message):
-    players = await orm.get_from_id(message.from_user.id) 
+    players = await orm.get_player_from_id(message.from_user.id) 
     if players is not None:
         await message.answer("<b>Рад видеть </b>" + players.player_name + "<b>, че тебе надо?</b>", parse_mode="html", reply_markup=keyboards.main_menu)
     else:
