@@ -1,9 +1,9 @@
 import logging
-from sqlalchemy import String, Integer
+from sqlalchemy import ForeignKey, String, Integer, Boolean, Date
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 from pager import configs
-from sqlalchemy.orm import Mapped, MappedColumn
+from sqlalchemy.orm import Mapped, MappedColumn, relationship
 from sqlalchemy.sql.expression import func, select
 
 def created_engine():
@@ -54,16 +54,28 @@ class Players(Base):
     id_tg: Mapped[int] = MappedColumn(primary_key=True)
     username: Mapped[str] = MappedColumn(String(255))
     player_name: Mapped[str] = MappedColumn(String(255))
-    number_group: Mapped[str] = MappedColumn(Integer)
+    game_id: Mapped[int] = MappedColumn(Integer, ForeignKey('Game.number_group'))
+    is_admin: Mapped[bool] = MappedColumn(Boolean(), default="false")
     
-    # def clear(self):
-    #     self.id_tg = None
-    #     self.username = None
-    #     self.player_name = None
-    #     self.number_group = None
-        
-    
+    game = relationship("Game", back_populates="players")
 
+
+class Game(Base):
+    __tablename__ = "Game"
+    number_group: Mapped[int] = MappedColumn(primary_key=True)
+    game_name: Mapped[str] = MappedColumn(String(255))
+    date = MappedColumn(Date())
+    
+    players = relationship("Players", back_populates="game")
+    
+    
+    
+    def clear(self):
+        self.id_tg = None
+        self.username = None
+        self.player_name = None
+        self.number_group = None
+        
 
 async_engine = created_engine()
 

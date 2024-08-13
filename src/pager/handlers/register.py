@@ -2,16 +2,13 @@
 Функции вызывается по очереди и записывает ответ из прошлой.
 """
 
-from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from pager import states
+from pager import keyboards, states
 from pager.databases import orm, core
 import logging
 from aiogram import F, Router, types
 
 register_route = Router()
-
-# TODO: Добавить запись в базу данных
 
 new_player = core.Players()
 
@@ -33,7 +30,7 @@ async def cmd_register_number_group(message: types.Message, state: FSMContext):
 
 @register_route.message(states.RegisterState.number_group, F.text)
 async def cmd_register_nickname(message: types.Message, state: FSMContext):
-    new_player.number_group = int(message.text)
+    new_player.game_id = int(message.text)
     await message.answer("Окей, а кликуха у тебя в пачке какая?")
 
     await state.update_data({"number_group": message.text})
@@ -51,7 +48,7 @@ async def cmd_register_done(message: types.Message, state: FSMContext):
 
     logging.debug("Set state: states.RegisterState.done. data: %s", data)
     if new_player.player_name is None or new_player.number_group is None:
-        #new_player.clear()
+        new_player.clear()
         await message.answer(
             f"Братан {message.from_user.full_name}! Ты слепой, данных не хватает! Давай по новой!"
         )
@@ -60,7 +57,7 @@ async def cmd_register_done(message: types.Message, state: FSMContext):
         cmd_register_number_group(message, state)
     else:
         await message.answer(
-            f"Окей, добро пожаловать в мрачный мир будущего " f"{data['nickname']}!"
+            f"Окей, добро пожаловать в мрачный мир будущего " f"{data['nickname']}!", reply_markup=keyboards.main_menu,
         )
         try:
             await orm.set_new_player(new_player)
@@ -68,5 +65,6 @@ async def cmd_register_done(message: types.Message, state: FSMContext):
             await message.answer(f"Братан {message.from_user.full_name}! У нас ошибка , пиши админу! Error: {e}")
             logging.error(f"Error: {e}")
         
-    #new_player.clear()
+    new_player.clear()
     await state.clear()
+    
