@@ -7,13 +7,13 @@ registred_button = ReplyKeyboardMarkup(
     input_field_placeholder="Выберите пункт меню...",
 )
 
-main_menu = ReplyKeyboardMarkup(
+main_menu_players = ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text="Когда игра?"),
             KeyboardButton(text="Инвентарь"),
             KeyboardButton(text="Связь с ГМ"),
-            KeyboardButton(text="Нашел ошибку")
+            KeyboardButton(text="Нашел ошибку"),
         ]
     ],
     resize_keyboard=True,
@@ -25,10 +25,8 @@ main_menu_admin = ReplyKeyboardMarkup(
         [
             KeyboardButton(text="Добавить время игры"),
             KeyboardButton(text="Написать игроку"),
-            KeyboardButton(text="Дать денег")
-        ],
-        [
-            KeyboardButton(text="Регистрация")
+            KeyboardButton(text="Дать денег"),
+            KeyboardButton(text="Добавить группу")
         ]
     ]
 )

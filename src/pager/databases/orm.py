@@ -15,6 +15,12 @@ async def get_player_from_id(id_tg : int) -> Players:
     async with async_session_factory() as session:
         result = await session.execute(stmt)
         return result.scalars().first()
+
+async def get_game_by_number_group(number_group : int) -> Game:
+    stmt = select(Game).where(Game.number_group == number_group)
+    async with async_session_factory() as session:
+        result = await session.execute(stmt)
+        return result.scalars().first()
     
 async def get_games_by_player_id(id_tg: int):
     # Создаем запрос для получения всех игр, связанных с определенным id_tg
@@ -29,7 +35,7 @@ async def get_games_by_player_id(id_tg: int):
         result = await session.execute(stmt)
         
         # Получаем список игр
-        games = result.scalars().all()
+        games = result.scalars().first()
         
         return games
     
@@ -38,3 +44,4 @@ async def set_new_player(new_player : Players):
         async with session.begin():
             session.add(new_player)
             await session.commit()
+            

@@ -55,8 +55,15 @@ class Players(Base):
     username: Mapped[str] = MappedColumn(String(255))
     player_name: Mapped[str] = MappedColumn(String(255))
     game_id: Mapped[int] = MappedColumn(Integer, ForeignKey('Game.number_group'))
-    is_admin: Mapped[bool] = MappedColumn(Boolean(), default="false")
+    is_admin: Mapped[bool] = MappedColumn(Boolean(), default=False)
     
+    def clear(self):
+        self.id_tg = None
+        self.username = None
+        self.player_name = None
+        self.game_id = None
+        self.is_admin = None
+        
     game = relationship("Game", back_populates="players")
 
 
@@ -67,16 +74,9 @@ class Game(Base):
     date = MappedColumn(Date())
     
     players = relationship("Players", back_populates="game")
+    def __str__(self):
+        return f"{self.date}"
     
-    
-    
-    def clear(self):
-        self.id_tg = None
-        self.username = None
-        self.player_name = None
-        self.number_group = None
-        
-
 async_engine = created_engine()
 
 async_session_factory = async_sessionmaker(async_engine)

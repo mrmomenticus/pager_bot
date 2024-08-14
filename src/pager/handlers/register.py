@@ -30,6 +30,13 @@ async def cmd_register_number_group(message: types.Message, state: FSMContext):
 
 @register_route.message(states.RegisterState.number_group, F.text)
 async def cmd_register_nickname(message: types.Message, state: FSMContext):
+    game = await orm.get_game_by_number_group(message.text)
+    if game is None:
+        await message.answer("Але, тебя нагрели, такой пачки нет")
+        await state.clear()
+        new_player.clear()
+        cmd_register_number_group(message, state)
+
     new_player.game_id = int(message.text)
     await message.answer("Окей, а кликуха у тебя в пачке какая?")
 
@@ -47,7 +54,7 @@ async def cmd_register_done(message: types.Message, state: FSMContext):
     data = await state.get_data()
 
     logging.debug("Set state: states.RegisterState.done. data: %s", data)
-    if new_player.player_name is None or new_player.number_group is None:
+    if new_player.player_name is None or new_player.game_id is None:
         new_player.clear()
         await message.answer(
             f"Братан {message.from_user.full_name}! Ты слепой, данных не хватает! Давай по новой!"
