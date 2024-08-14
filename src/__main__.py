@@ -3,7 +3,7 @@ import logging
 
 from pager import configs
 from aiogram import Bot, Dispatcher
-from pager.handlers import register, start
+from pager.handlers import register, start, menu_admin, menu_players
 from pager.databases import core
 
 
@@ -17,6 +17,8 @@ async def main():
 
     dp.include_router(start.start_route)
     dp.include_router(register.register_route)
+    dp.include_router(menu_admin.main_menu_admin)
+    dp.include_router(menu_players.main_menu_players)
 
 
     await core.init_database()
