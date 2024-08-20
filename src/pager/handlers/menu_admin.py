@@ -1,7 +1,7 @@
 
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
-from pager import states
+from pager import keyboards, states
 from pager.databases import orm
 import re
 
@@ -31,7 +31,7 @@ async def cmd_add_time(message: types.Message, state: FSMContext):
     
     data = await state.get_data()
     await orm.set_date_game(int(data["number_group"]), message.text)
-    await message.answer("Дата успешно добавлена")
+    await message.answer("Дата успешно добавлена", reply_markup=keyboards.main_menu_admin)
     await state.clear()
     
 #TODO: Отделить выше методы в отдельный класс

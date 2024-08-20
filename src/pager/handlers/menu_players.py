@@ -1,6 +1,7 @@
 
 from aiogram import F, Router, types
 
+from pager import keyboards
 from pager.databases import orm
 
 main_menu_players = Router()
@@ -11,5 +12,5 @@ async def cmd_when_game(message: types.Message):
     if date.date is None:
         await message.answer("Даты игры не найдены")
     else:
-        await message.answer(f"Игра будет: {date.date.strftime('%d.%m.%Y')}")
+        await message.answer(f"Игра будет: {date.date.strftime('%d.%m.%Y')}", reply_markup=keyboards.main_menu_players)
 
