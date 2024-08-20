@@ -13,21 +13,16 @@ async def cmd_start(message: types.Message):
     if players is not None:
         if players.is_admin:
             await message.answer(
-                "<b>Рад видеть администратора</b>"
-                + players.player_name
-                + "<b>, че тебе надо?</b>",
-                parse_mode="html",
+                "Рад видеть администратора" + players.player_name + ", че тебе надо?",
                 reply_markup=keyboards.main_menu_admin,
             )
         else:
             await message.answer(
-                "<b>Рад видеть </b>" + players.player_name + "<b>, че тебе надо?</b>",
-                parse_mode="html",
+                "Рад видеть " + players.player_name + "<b>, че тебе надо?",
                 reply_markup=keyboards.main_menu_players,
             )
     else:
         await message.answer(
-            "<b>Привет кусок мяса. Добро пожаловать в мрачный мир будущего! Тебе тут не рады, но любое мнение тут пыль. Чего ты хочешь?</b>",
-            parse_mode="html",
+            "Привет кусок мяса. Добро пожаловать в мрачный мир будущего! Тебе тут не рады, но любое мнение тут пыль. Чего ты хочешь?",
             reply_markup=keyboards.registred_button,
         )

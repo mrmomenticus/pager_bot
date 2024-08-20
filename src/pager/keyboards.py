@@ -26,9 +26,11 @@ main_menu_admin = ReplyKeyboardMarkup(
             KeyboardButton(text="Добавить время игры"),
             KeyboardButton(text="Написать игроку"),
             KeyboardButton(text="Дать денег"),
-            KeyboardButton(text="Добавить группу")
+            KeyboardButton(text="Добавить группу"),
         ]
-    ]
+    ],
+    resize_keyboard=True,
+    input_field_placeholder="Выберите пункт меню...",
 )
 
 yes_no = ReplyKeyboardMarkup(

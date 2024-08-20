@@ -30,12 +30,17 @@ async def cmd_register_number_group(message: types.Message, state: FSMContext):
 
 @register_route.message(states.RegisterState.number_group, F.text)
 async def cmd_register_nickname(message: types.Message, state: FSMContext):
-    game = await orm.get_game_by_number_group(message.text)
+    try:
+        game = await orm.get_game_by_number_group((int(message.text))) #await orm.get_game_by_number_group(message.text)
+    except Exception as e: 
+        await message.answer(f"Братан, ошибка получения номера игры, зови админа! Error: {e}" )
+        
+
     if game is None:
         await message.answer("Але, тебя нагрели, такой пачки нет")
         await state.clear()
         new_player.clear()
-        cmd_register_number_group(message, state)
+        return
 
     new_player.game_id = int(message.text)
     await message.answer("Окей, а кликуха у тебя в пачке какая?")
@@ -64,7 +69,7 @@ async def cmd_register_done(message: types.Message, state: FSMContext):
         cmd_register_number_group(message, state)
     else:
         await message.answer(
-            f"Окей, добро пожаловать в мрачный мир будущего " f"{data['nickname']}!", reply_markup=keyboards.main_menu,
+            f"Окей, добро пожаловать в мрачный мир будущего " f"{data['nickname']}!", reply_markup=keyboards.main_menu_players,
         )
         try:
             await orm.set_new_player(new_player)

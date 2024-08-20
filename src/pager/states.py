@@ -6,3 +6,6 @@ class RegisterState(StatesGroup):
     number_group = State()
     nickname = State()
 
+class AddDateState(StatesGroup):
+    number_group = State()
+    date = State()
