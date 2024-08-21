@@ -19,7 +19,7 @@ async def cmd_start(message: types.Message):
         else:
             await message.answer(
                 "Рад видеть " + players.player_name + " че тебе надо?",
-                reply_markup=keyboards.PlayerMenuButtons().get_markup(),
+                reply_markup=keyboards.PlayerMenuButtons().get_keyboard(),
             )
     else:
         await message.answer(
