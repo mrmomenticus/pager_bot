@@ -38,3 +38,6 @@ async def cmd_add_time(message: types.Message, state: FSMContext):
 
  
 
+@main_menu_admin.message(F.text == "Добавить группу")
+async def cmd_add_group(message: types.Message, state: FSMContext):
+    await message.answer("Введи название группы")

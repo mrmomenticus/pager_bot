@@ -1,45 +1,52 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 
-registred_button = ReplyKeyboardMarkup(
-    keyboard=[[KeyboardButton(text="Зарегистрироваться")]],
-    resize_keyboard=True,
-    input_field_placeholder="Выберите пункт меню...",
-)
+class PlayerMenuButtons(ReplyKeyboardBuilder):
+    def __init__(self, size: list = (3, 3, 3, 3)) -> None:
+        self.buttons = (
+            "Когда игра?",
+            "Инвентарь...",
+            "Материалы по игре...",
+            "Список знакомых НПС",
+            "Список заданий",
+            "Нашел ошибку",
+        )
+        self.add(*self.buttons)
+        self.adjust(*size)
+        self.as_markup(resize_keyboard=True, one_time_keyboard=False, input_field_placeholder = "Выберите пункт меню...")
 
-main_menu_players = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text="Когда игра?"),
-            KeyboardButton(text="Инвентарь"),
-            KeyboardButton(text="Связь с ГМ"),
-            KeyboardButton(text="Нашел ошибку"),
-        ]
-    ],
-    resize_keyboard=True,
-    input_field_placeholder="Выберите пункт меню...",
-)
+    def get_markup(self):
+        return self
+        
+    
 
-main_menu_admin = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text="Добавить время игры"),
-            KeyboardButton(text="Написать игроку"),
-            KeyboardButton(text="Дать денег"),
-            KeyboardButton(text="Добавить группу"),
-        ]
-    ],
-    resize_keyboard=True,
-    input_field_placeholder="Выберите пункт меню...",
-)
+class AdminMenuButtons(ReplyKeyboardBuilder):
+    def __init__(self, size: list = (3, 3, 3, 3)) -> None:
+        self._buttons = (
+            "Добавить дату игры",
+            "Добавить новую группу",
+            "Написать игроку",
+            "Пополнить инвентарь...",
+            "Информация по игрокам...",
+            "Инвентарь игрока", 
+        )
+        self.add(self._buttons)
+        self.adjust(*size)
+        self.as_markup(resize_keyboard=True, one_time_keyboard=False, input_field_placeholder = "Выберите пункт меню...")
+        
+    def get_markup(self):
+        return self
+    
+    
+class RegistredButton(ReplyKeyboardBuilder):
+    def __init__(self, size: list = (3, 3, 3, 3)) -> None:
+        self._buttons = (
+            "Зарегистрироваться",
+        )
+        self.add(self._buttons)
+        self.adjust(*size)
+        self.as_markup(resize_keyboard=True, one_time_keyboard=False, input_field_placeholder = "Выберите пункт меню...")
 
-yes_no = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text="Да"),
-            KeyboardButton(text="Нет"),
-        ]
-    ],
-    resize_keyboard=True,
-    input_field_placeholder="Выберите пункт меню...",
-)
+    def get_markup(self):
+        return self
