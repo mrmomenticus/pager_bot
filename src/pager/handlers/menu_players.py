@@ -12,5 +12,5 @@ async def cmd_when_game(message: types.Message):
     if date.date is None:
         await message.answer("Даты игры не найдены")
     else:
-        await message.answer(f"Игра будет: {date.date.strftime('%d.%m.%Y')}", reply_markup=keyboards.main_menu_players)
+        await message.answer(f"Игра будет: {date.date.strftime('%d.%m.%Y')}", reply_markup=keyboards.PlayerMenuButtons().get_keyboard())
 

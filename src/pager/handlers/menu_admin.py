@@ -31,7 +31,7 @@ async def cmd_add_time(message: types.Message, state: FSMContext):
     
     data = await state.get_data()
     await orm.set_date_game(int(data["number_group"]), message.text)
-    await message.answer("Дата успешно добавлена", reply_markup=keyboards.main_menu_admin)
+    await message.answer("Дата успешно добавлена", reply_markup=keyboards.PlayerMenuButtons().get_keyboard())
     await state.clear()
     
 #TODO: Отделить выше методы в отдельный класс

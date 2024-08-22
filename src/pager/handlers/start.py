@@ -14,7 +14,7 @@ async def cmd_start(message: types.Message):
         if players.is_admin:
             await message.answer(
                 "Рад видеть администратора " + players.player_name + ", че тебе надо?",
-                reply_markup=keyboards.AdminMenuButtons().get_markup(),
+                reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
             )
         else:
             await message.answer(
@@ -24,5 +24,5 @@ async def cmd_start(message: types.Message):
     else:
         await message.answer(
             "Привет кусок мяса. Добро пожаловать в мрачный мир будущего! Тебе тут не рады, но любое мнение тут пыль. Чего ты хочешь?",
-            reply_markup=keyboards.RegistredButton().get_markup(),
+            reply_markup=keyboards.RegistredButton().get_keyboard(),
         )

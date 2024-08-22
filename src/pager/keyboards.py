@@ -34,6 +34,7 @@ class AdminMenuButtons:
             KeyboardButton(text="Информация по игрокам..."),
             KeyboardButton(text="Инвентарь игрока"),
         )
+        self.builder = ReplyKeyboardBuilder()
         self.builder.add(*self._buttons)
         self.builder.adjust(*size, True)
 
@@ -48,6 +49,7 @@ class AdminMenuButtons:
 class RegistredButton(ReplyKeyboardBuilder):
     def __init__(self, size: list = (3, 3, 3, 3)) -> None:
         self._buttons = KeyboardButton(text="Зарегистрироваться")
+        self.builder = ReplyKeyboardBuilder()
         self.builder.add(*self._buttons)
         self.builder.adjust(*size)
 
