@@ -28,7 +28,7 @@ class AdminMenuButtons:
     def __init__(self, size: list = (3, 3)) -> None:
         self._buttons = (
             KeyboardButton(text="Добавить дату игры"),
-            KeyboardButton(text="Добавить новую группу"),
+            KeyboardButton(text="Добавить группу"),
             KeyboardButton(text="Написать игроку"),
             KeyboardButton(text="Пополнить инвентарь..."),
             KeyboardButton(text="Информация по игрокам..."),

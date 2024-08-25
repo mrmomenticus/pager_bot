@@ -51,3 +51,9 @@ async def set_date_game(number_group: int, date_str: str):
             await session.commit()
             
             
+async def set_new_game(new_game : Game):
+    async with async_session_factory() as session:
+        async with session.begin():
+            session.add(new_game)
+            await session.commit()
+            

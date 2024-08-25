@@ -9,3 +9,7 @@ class RegisterState(StatesGroup):
 class AddDateState(StatesGroup):
     number_group = State()
     date = State()
+    
+class AddGroupState(StatesGroup):
+    number_group = State()
+    group_name = State()
