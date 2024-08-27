@@ -163,8 +163,11 @@ cython_debug/
 
 
 #Конфиг файл
-config.yaml
+config_test.yaml
 
 
 #ide 
 .vscode
+
+images
+

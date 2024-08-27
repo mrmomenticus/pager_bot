@@ -1,4 +1,4 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 
@@ -61,3 +61,22 @@ class RegistredButton(ReplyKeyboardBuilder):
         )
 
 
+
+class InformationPlayers(ReplyKeyboardBuilder):
+    def __init__ (self, size: list = (3, 3)) -> None:
+        self._buttons = (
+            KeyboardButton(text="Добавить информацию"),
+            KeyboardButton(text="Получить информацию"),
+            KeyboardButton(text="Удалить информацию"),
+            KeyboardButton(text="Назад"),
+        )
+        self.builder = ReplyKeyboardBuilder()
+        self.builder.add(*self._buttons)
+        self.builder.adjust(*size, True)
+
+    def get_keyboard(self):
+        return self.builder.as_markup(
+            resize_keyboard=True,
+            one_time_keyboard=False,
+            input_field_placeholder="Выберите пункт меню...",
+        )

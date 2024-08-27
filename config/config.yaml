@@ -1,0 +1,9 @@
+token: "TOKEN" # токен
+database: 
+  type: "postgresql+asyncpg" # тип базы данных
+  user: "user" # имя пользователя
+  password: "password" # пароль
+  host: "ip" # ip
+  port: "port" # порт
+  table: "table" # название таблицы
+  echo: false # включить логирование базы данных

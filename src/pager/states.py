@@ -13,3 +13,8 @@ class AddDateState(StatesGroup):
 class AddGroupState(StatesGroup):
     number_group = State()
     group_name = State()
+    
+class AddInfoState(StatesGroup):
+    name = State()
+    photo = State()
+    save = State()
