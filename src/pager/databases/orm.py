@@ -57,3 +57,12 @@ async def set_new_game(new_game : Game):
             session.add(new_game)
             await session.commit()
             
+async def set_new_photo_state(id_tg: int, photo_url: str): #TODO: узкое место 
+    async with async_session_factory() as session:
+        async with session.begin():
+            stmt = select(Players).where(Players.id_tg == id_tg)
+            result = await session.execute(stmt)
+            player = result.scalars().first()
+            player.photo_state = player.photo_state + [photo_url]
+            await session.commit()
+            

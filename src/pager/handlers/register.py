@@ -69,7 +69,7 @@ async def cmd_register_done(message: types.Message, state: FSMContext):
         cmd_register_number_group(message, state)
     else:
         await message.answer(
-            f"Окей, добро пожаловать в мрачный мир будущего " f"{data['nickname']}!", reply_markup=keyboards.main_menu_players,
+            f"Окей, добро пожаловать в мрачный мир будущего " f"{data['nickname']}!", reply_markup=keyboards.PlayerMenuButtons().get_keyboard()
         )
         try:
             await orm.set_new_player(new_player)

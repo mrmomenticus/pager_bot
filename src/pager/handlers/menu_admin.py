@@ -1,3 +1,4 @@
+import os
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
@@ -111,11 +112,15 @@ async def cmd_add_photo(message: types.Message, state: FSMContext):
 
 @main_menu_admin.message(states.AddInfoState.photo, F.photo)
 async def cmd_save_info(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    name = data["name"]
-    path = f"{name}_{message.photo[-1].file_id}.jpg"
-
+    name = (await state.get_data()).get("name")
+    
+    os.makedirs(os.path.join("images", name), exist_ok=True)
+    
+    path = f"{name}/{name}_{message.photo[-1].file_id}.jpg"
+    
     await message.bot.download(message.photo[-1].file_id, f"images/{path}")
+    
+    await orm.set_new_photo_state(message.from_user.id, path)
 
     await state.set_state(states.AddInfoState.save)
 

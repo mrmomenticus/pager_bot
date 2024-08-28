@@ -1,5 +1,6 @@
 import logging
-from sqlalchemy import ForeignKey, String, Integer, Boolean, Date
+from typing import List
+from sqlalchemy import ARRAY, Column, ForeignKey, String, Integer, Boolean, Date
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 from pager import configs
@@ -60,6 +61,7 @@ class Players(Base):
     player_name: Mapped[str] = MappedColumn(String(255))
     game_id: Mapped[int] = MappedColumn(Integer, ForeignKey("Game.number_group"))
     is_admin: Mapped[bool] = MappedColumn(Boolean(), default=False)
+    photo_state = Column(ARRAY(String), nullable=True) #TODO: в дальнейшем может отдельной таблицей
 
     def clear(self):
         self.id_tg = None
@@ -81,6 +83,7 @@ class Game(Base):
 
     def __str__(self):
         return f"{self.date}"
+    
 
 
 async_engine = created_engine()
