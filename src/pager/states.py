@@ -17,4 +17,11 @@ class AddGroupState(StatesGroup):
 class AddInfoState(StatesGroup):
     name = State()
     photo = State()
-    save = State()
+    
+class GetInfoState(StatesGroup):
+    name = State()
+    get_info = State()
+    
+class DeleteInfoState(StatesGroup):
+    name = State()
+    delete_info = State()

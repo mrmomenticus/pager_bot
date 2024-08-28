@@ -1,5 +1,4 @@
 import logging
-from typing import List
 from sqlalchemy import ARRAY, Column, ForeignKey, String, Integer, Boolean, Date
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase

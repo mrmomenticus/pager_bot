@@ -1,3 +1,4 @@
+import logging
 from sqlalchemy import func, select
 from pager.databases.core import Game, Players, async_session_factory
 
@@ -57,12 +58,38 @@ async def set_new_game(new_game : Game):
             session.add(new_game)
             await session.commit()
             
-async def set_new_photo_state(id_tg: int, photo_url: str): #TODO: узкое место 
+async def set_new_photo_state(player_name: str, photo_url: str): #TODO: узкое место 
     async with async_session_factory() as session:
         async with session.begin():
-            stmt = select(Players).where(Players.id_tg == id_tg)
-            result = await session.execute(stmt)
+            stmt = select(Players).where(Players.player_name == player_name) #TODO: Добавить исключение если не найден игрок
+            result = await session.execute(stmt) 
             player = result.scalars().first()
+            if player is None:
+                logging.error("Такого игрока нет")
+                raise Exception ("Такого игрока нет")
+            player.photo_state = player.photo_state or []  # Initialize as empty list if None
             player.photo_state = player.photo_state + [photo_url]
             await session.commit()
             
+async def get_photo_state(player_name: str): #TODO: может быть ошибка, если в базе есть 2 одинаковых игрока по имени
+    async with async_session_factory() as session:
+        stmt = select(Players).where(Players.player_name == player_name)
+        result = await session.execute(stmt)
+        player = result.scalars().all()
+        if player is not None:
+            return player
+        else:
+            return None
+            
+async def delete_info(player_name: str):
+    async with async_session_factory() as session:
+        async with session.begin():
+            stmt = select(Players).where(Players.player_name == player_name)
+            result = await session.execute(stmt)
+            player = result.scalars().first()
+            if player is not None:
+                player.photo_state = None
+                await session.commit()
+            else:
+                logging.error("Такого игрока нет")
+                raise Exception ("Такого игрока нет")
