@@ -30,9 +30,9 @@ class AdminMenuButtons:
             KeyboardButton(text="Добавить дату игры"),
             KeyboardButton(text="Добавить группу"),
             KeyboardButton(text="Написать игроку"),
-            KeyboardButton(text="Пополнить инвентарь..."),
+            KeyboardButton(text="Добавить хронологию игры"),
             KeyboardButton(text="Информация по игрокам..."),
-            KeyboardButton(text="Инвентарь игрока"),
+            KeyboardButton(text="Инвентарь игрока..."),
         )
         self.builder = ReplyKeyboardBuilder()
         self.builder.add(*self._buttons)
@@ -68,6 +68,27 @@ class InformationPlayers(ReplyKeyboardBuilder):
             KeyboardButton(text="Добавить информацию"),
             KeyboardButton(text="Получить информацию"),
             KeyboardButton(text="Удалить информацию"),
+            KeyboardButton(text="Назад"),
+        )
+        self.builder = ReplyKeyboardBuilder()
+        self.builder.add(*self._buttons)
+        self.builder.adjust(*size, True)
+
+    def get_keyboard(self):
+        return self.builder.as_markup(
+            resize_keyboard=True,
+            one_time_keyboard=False,
+            input_field_placeholder="Выберите пункт меню...",
+        )
+        
+class InventoryPlayers(ReplyKeyboardBuilder):
+    def __init__ (self, size: list = (3, 3)) -> None:
+        self._buttons = (
+            KeyboardButton(text="Добавить вещь"),
+            KeyboardButton(text="Добавить денег"),
+            KeyboardButton(text="Узнать инвентарь игрока"),
+            KeyboardButton(text="Удалить вещь"),
+            KeyboardButton(text="Удалить деньги"),
             KeyboardButton(text="Назад"),
         )
         self.builder = ReplyKeyboardBuilder()

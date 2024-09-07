@@ -37,7 +37,7 @@ async def is_database_exists():
     try:
         # Попытка получить количество строк из таблицы Players
         async with async_session_factory() as session:
-            result = await session.execute(select(func.count()).select_from(Players))
+            result = await session.execute(select(func.count()).select_from(Player))
             count = result.scalar_one()
             if count == 0:
                 logging.info("Таблица Players пустая.")
@@ -53,15 +53,16 @@ class Base(DeclarativeBase):
     pass
 
 
-class Players(Base):
+class Player(Base):
     __tablename__ = "Players"
     id_tg: Mapped[int] = MappedColumn(primary_key=True)
+    inventory: Mapped["Inventory"] = relationship(back_populates="player")
+    game: Mapped[list["Game"]] = relationship("Game", back_populates="players")
     username: Mapped[str] = MappedColumn(String(255))
     player_name: Mapped[str] = MappedColumn(String(255))
-    game_id: Mapped[int] = MappedColumn(Integer, ForeignKey("Game.number_group"))
     is_admin: Mapped[bool] = MappedColumn(Boolean(), default=False)
     photo_state = Column(ARRAY(String), nullable=True) #TODO: в дальнейшем может отдельной таблицей
-
+    
     def clear(self):
         self.id_tg = None
         self.username = None
@@ -69,21 +70,34 @@ class Players(Base):
         self.game_id = None
         self.is_admin = None
 
-    game = relationship("Game", back_populates="players")
-
-
 class Game(Base):
     __tablename__ = "Game"
     number_group: Mapped[int] = MappedColumn(primary_key=True)
+    player_id: Mapped[int] = MappedColumn(Integer, ForeignKey("Players.id_tg"))
     game_name: Mapped[str] = MappedColumn(String(255))
     date = MappedColumn(Date())
+    players: Mapped[list["Player"]] = relationship("Player", back_populates="game")
 
-    players = relationship("Players", back_populates="game")
 
     def __str__(self):
         return f"{self.date}"
     
+class Inventory(Base):
+    __tablename__ = "Inventory"
+    id: Mapped[int] = MappedColumn(Integer, primary_key=True, autoincrement=True)
+    player_id : Mapped[int] = MappedColumn(Integer, ForeignKey("Players.id_tg"))
+    money: Mapped[int] = MappedColumn(Integer)
+    
+    player: Mapped["Player"] = relationship(back_populates="inventory")
 
+
+class Stuff(Base):
+    __tablename__ = "Stuff"
+    id: Mapped[int] = MappedColumn(Integer, primary_key=True, autoincrement=True)
+    title: Mapped[str] = MappedColumn(String(255))
+    price: Mapped[int] = MappedColumn(Integer)
+    description: Mapped[str] = MappedColumn(String(255))
+    
 
 async_engine = created_engine()
 

@@ -1,7 +1,7 @@
 from aiogram import Router, types
 from aiogram.filters.command import CommandStart
 from pager import keyboards
-from pager.databases import orm
+from pager.databases.orm import PlayerOrm
 
 
 start_route = Router()
@@ -9,7 +9,7 @@ start_route = Router()
 
 @start_route.message(CommandStart())
 async def cmd_start(message: types.Message):
-    players = await orm.get_player_from_id(message.from_user.id)
+    players = await PlayerOrm.select_player_from_id(message.from_user.id)
     if players is not None:
         if players.is_admin:
             await message.answer(

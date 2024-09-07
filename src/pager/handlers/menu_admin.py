@@ -4,7 +4,8 @@ from aiogram import F, Router, types
 from aiogram.types import FSInputFile
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
-from pager.databases import orm
+from pager.databases.orm import PlayerOrm, GameOrm
+from pager.databases import core
 import re
 
 main_menu_admin = Router()
@@ -12,7 +13,7 @@ main_menu_admin = Router()
 """Блок добавлениы времени"""
 
 
-@main_menu_admin.message(F.text == "Добавить время игры")
+@main_menu_admin.message(F.text == "Добавить дату игры")
 async def cmd_number_group(message: types.Message, state: FSMContext):
     await message.answer("Введи номер пачки")
 
@@ -36,11 +37,11 @@ async def cmd_add_time(message: types.Message, state: FSMContext):
         return
 
     data = await state.get_data()
-    await orm.set_date_game(int(data["number_group"]), message.text)
+    await GameOrm.set_date_game(int(data["number_group"]), message.text)
 
     await message.answer(
         "Дата успешно добавлена",
-        reply_markup=keyboards.PlayerMenuButtons().get_keyboard(),
+        reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
     )
 
     await state.clear()
@@ -72,11 +73,11 @@ async def cmd_add_group_name(message: types.Message, state: FSMContext):
 async def cmd_success_add_group(message: types.Message, state: FSMContext):
     nubmer_game = await state.get_data()
 
-    game = orm.Game(
+    game = core.Game(
         number_group=int(nubmer_game["nubmer_game"]), game_name=message.text
     )
 
-    await orm.set_new_game(game)
+    await GameOrm.set_new_game(game)
 
     await message.answer(
         "Группа успешно добавлена",
@@ -123,7 +124,7 @@ async def cmd_save_info(message: types.Message, state: FSMContext):
         f"images/{name}/{name}_{message.photo[-1].file_id}.jpg",
     )
 
-    await orm.set_new_photo_state(
+    await PlayerOrm.create_photo_state(
         name, f"images/{name}/{name}_{message.photo[-1].file_id}.jpg"
     )
 
@@ -143,7 +144,7 @@ async def cmd_get_name_for_info(message: types.Message, state: FSMContext):
 
 @main_menu_admin.message(states.GetInfoState.name, F.text)
 async def cmd_get_info(message: types.Message, state: FSMContext):
-    player = await orm.get_photo_state(message.text)
+    player = await PlayerOrm.select_photo_state(message.text)
 
     if player is None:
         await message.answer("Такого игрока нет")
@@ -168,7 +169,7 @@ async def cmd_delete_info_name(message: types.Message, state: FSMContext):
 
 @main_menu_admin.message(states.DeleteInfoState.name, F.text)
 async def cmd_delete_info(message: types.Message, state: FSMContext):
-    await orm.delete_info(message.text)
+    await PlayerOrm.delete_photo_state(message.text)
 
     try:
         import shutil
@@ -190,4 +191,10 @@ async def cmd_delete_info(message: types.Message, state: FSMContext):
 async def cmd_back(message: types.Message):
     await message.answer(
         "Назад", reply_markup=keyboards.AdminMenuButtons().get_keyboard()
+    )
+
+@main_menu_admin.message(F.text == "Инвентарь игрока...")
+async def cmd_inventory_players(message: types.Message):
+    await message.answer(
+        "Что именно хотите?", reply_markup=keyboards.InventoryPlayers().get_keyboard()
     )

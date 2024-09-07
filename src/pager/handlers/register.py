@@ -10,7 +10,7 @@ from aiogram import F, Router, types
 
 register_route = Router()
 
-new_player = core.Players()
+new_player = core.Player()
 
 
 @register_route.message(F.text == "Зарегистрироваться")
@@ -28,10 +28,10 @@ async def cmd_register_number_group(message: types.Message, state: FSMContext):
     )
 
 
-@register_route.message(states.RegisterState.number_group, F.text)
+@register_route.message(states.RegisterState.number_group, F.text) # TODO уйти от номеров в сторону название пачки
 async def cmd_register_nickname(message: types.Message, state: FSMContext):
     try:
-        game = await orm.get_game_by_number_group((int(message.text))) #await orm.get_game_by_number_group(message.text)
+        game = await orm.GameOrm.get_game_by_number_group((int(message.text))) #await orm.get_game_by_number_group(message.text)
     except Exception as e: 
         await message.answer(f"Братан, ошибка получения номера игры, зови админа! Error: {e}" )
         
@@ -72,7 +72,7 @@ async def cmd_register_done(message: types.Message, state: FSMContext):
             f"Окей, добро пожаловать в мрачный мир будущего " f"{data['nickname']}!", reply_markup=keyboards.PlayerMenuButtons().get_keyboard()
         )
         try:
-            await orm.set_new_player(new_player)
+            await orm.PlayerOrm.update_new_player(new_player)
         except Exception as e:
             await message.answer(f"Братан {message.from_user.full_name}! У нас ошибка , пиши админу! Error: {e}")
             logging.error(f"Error: {e}")
