@@ -88,7 +88,7 @@ class InventoryPlayers(ReplyKeyboardBuilder):
             KeyboardButton(text="Добавить денег"),
             KeyboardButton(text="Узнать инвентарь игрока"),
             KeyboardButton(text="Удалить вещь"),
-            KeyboardButton(text="Удалить деньги"),
+            KeyboardButton(text="Забрать деньги"),
             KeyboardButton(text="Назад"),
         )
         self.builder = ReplyKeyboardBuilder()

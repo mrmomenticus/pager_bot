@@ -14,6 +14,7 @@ class AddGroupState(StatesGroup):
     number_group = State()
     group_name = State()
     
+# Блок добавления информации по игрокам
 class AddInfoState(StatesGroup):
     name = State()
     photo = State()
@@ -25,3 +26,12 @@ class GetInfoState(StatesGroup):
 class DeleteInfoState(StatesGroup):
     name = State()
     delete_info = State()
+
+#Инвентарь
+class AddMoneyState(StatesGroup):
+    name = State()
+    money = State()
+    
+class TakeMoneyState(StatesGroup):
+    name = State()
+    money = State()

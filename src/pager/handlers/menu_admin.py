@@ -197,3 +197,63 @@ class InventoryPlayers:
         await message.answer(
             "Что именно хотите?", reply_markup=keyboards.InventoryPlayers().get_keyboard()
         )
+        
+    @staticmethod
+    @main_menu_admin.message(F.text == "Добавить денег")
+    async def cmd_add_money_name(message: types.Message, state: FSMContext):
+        await message.answer("Отправте имя игрока")
+        
+        await state.set_state(states.AddMoneyState.name)
+    
+    @staticmethod
+    @main_menu_admin.message(states.AddMoneyState.name, F.text)
+    async def cmd_add_money(message: types.Message, state: FSMContext):
+        
+        await state.update_data(name = message.text)
+        await message.answer("Количество денег")
+
+        await state.set_state(states.AddMoneyState.money)
+    
+    @staticmethod
+    @main_menu_admin.message(states.AddMoneyState.money, F.text)
+    async def cmd_add_money_complete(message: types.Message, state: FSMContext):
+        name = (await state.get_data()).get("name")
+        try:
+            money = await PlayerOrm.update_money(name, int(message.text))
+            if money is None:
+                await message.answer(f"Игрок {name} не найден!")
+            else:
+                await message.answer(f"Игрок {name} имеет {money}!")
+        except Exception as e:
+            await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
+
+    @staticmethod
+    @main_menu_admin.message(F.text == "Забрать деньги")
+    async def cmd_take_money_name(message: types.Message, state: FSMContext):
+        await message.answer("Отправте имя игрока")
+        
+        await state.set_state(states.TakeMoneyState.name)
+    
+    @staticmethod
+    @main_menu_admin.message(states.TakeMoneyState.name, F.text)
+    async def cmd_take_money(message: types.Message, state: FSMContext):
+        
+        await state.update_data(name = message.text)
+        await message.answer("Количество денег")
+
+        await state.set_state(states.TakeMoneyState.money)
+    
+    @staticmethod #TODO Можем уйти в минус
+    @main_menu_admin.message(states.TakeMoneyState.money, F.text)
+    async def cmd_take_money_complete(message: types.Message, state: FSMContext):
+        name = (await state.get_data()).get("name")
+        try:
+            money = await PlayerOrm.take_money(name, int(message.text))
+            if money is None:
+                await message.answer(f"Игрок {name} не найден!")
+            else:
+                await message.answer(f"Игрок {name} имеет {money}!")
+        except Exception as e:
+            await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
+        
+        

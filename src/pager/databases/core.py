@@ -89,14 +89,18 @@ class Inventory(Base):
     money: Mapped[int] = MappedColumn(Integer)
     
     player: Mapped["Player"] = relationship(back_populates="inventory")
+    stuff: Mapped[list["Stuff"]] = relationship(back_populates="inventory")
 
 
 class Stuff(Base):
     __tablename__ = "Stuff"
     id: Mapped[int] = MappedColumn(Integer, primary_key=True, autoincrement=True)
+    invetory_id: Mapped[int] = MappedColumn(Integer, ForeignKey("Inventory.id"))
     title: Mapped[str] = MappedColumn(String(255))
     price: Mapped[int] = MappedColumn(Integer)
     description: Mapped[str] = MappedColumn(String(255))
+    
+    inventory: Mapped["Inventory"] = relationship(back_populates="stuff")
     
 
 async_engine = created_engine()

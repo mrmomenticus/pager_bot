@@ -1,6 +1,6 @@
 import logging
 from sqlalchemy import func, select
-from pager.databases.core import Game, Player, async_session_factory
+from pager.databases.core import Game, Player, Inventory, async_session_factory
 
 
 """
@@ -70,7 +70,9 @@ class PlayerOrm:
         async with async_session_factory() as session:
             async with session.begin():
                 session.add(new_player)
+                session.add(Inventory(player_id=new_player.id_tg))
                 await session.commit()
+        
 
     """
         Добавляет url фото в photo_state игрока.
@@ -124,6 +126,46 @@ class PlayerOrm:
                 else:
                     logging.error("Такого игрока нет")
                     raise Exception("Такого игрока нет")
+
+    @staticmethod
+    async def update_money(player_name: str, money: int):
+        async with async_session_factory() as session:
+            async with session.begin():
+                stmt = (
+                    select(Inventory)
+                    .join(Player, Inventory.player_id == Player.id_tg)
+                    .where(Player.player_name == player_name)
+                )
+                result = await session.execute(stmt)
+                inventory = result.scalars().first()
+                if inventory is not None:
+                    sum = inventory.money + money
+                    inventory.money += money
+                    await session.commit()
+                    return sum
+                else:
+                    logging.debug("Такого игрока нет")
+                    return None
+                
+    @staticmethod
+    async def take_money(player_name: str, money: int):
+        async with async_session_factory() as session:
+            async with session.begin():
+                stmt = (
+                    select(Inventory)
+                    .join(Player, Inventory.player_id == Player.id_tg)
+                    .where(Player.player_name == player_name)
+                )
+                result = await session.execute(stmt)
+                inventory = result.scalars().first()
+                if inventory is not None:
+                    sum = inventory.money - money
+                    inventory.money -= money
+                    await session.commit()
+                    return sum
+                else:
+                    logging.debug("Такого игрока нет")
+                    return None
 
 
 class GameOrm:
