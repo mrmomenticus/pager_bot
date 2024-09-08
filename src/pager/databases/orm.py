@@ -1,6 +1,6 @@
 import logging
 from sqlalchemy import func, select
-from pager.databases.core import Game, Player, Inventory, async_session_factory
+from pager.databases.core import Game, Player, Inventory, Stuff, async_session_factory
 
 
 """
@@ -166,7 +166,43 @@ class PlayerOrm:
                 else:
                     logging.debug("Такого игрока нет")
                     return None
-
+    @staticmethod
+    async def select_money(player_name: str):
+        async with async_session_factory() as session:
+            stmt = (
+                select(Inventory)
+                .join(Player, Inventory.player_id == Player.id_tg)
+                .where(Player.player_name == player_name)
+            )
+            result = await session.execute(stmt)
+            inventory = result.scalars().first()
+            if inventory is not None:
+                return inventory.money
+            else:
+                return None
+    @staticmethod
+    async def add_new_item(player_name: str, item_name: str, price_item: int, description: str):
+        async with async_session_factory() as session:
+            async with session.begin():
+                stmt = (
+                    select(Inventory)
+                    .join(Player, Inventory.player_id == Player.id_tg)
+                    .where(Player.player_name == player_name)
+                )
+                result = await session.execute(stmt)
+                inventory = result.scalars().first()
+                if inventory is not None:
+                    session.add(
+                        Stuff(
+                            invetory_id=inventory.id,
+                            title=item_name,
+                            price=price_item,
+                            description=description
+                        )
+                    )
+                else:
+                    raise ValueError("Такого игрока нет")
+                await session.commit()
 
 class GameOrm:
     @staticmethod

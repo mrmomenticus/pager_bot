@@ -10,13 +10,17 @@ import re
 
 main_menu_admin = Router()
 
+
 @main_menu_admin.message(F.text == "Назад")
 async def cmd_back(message: types.Message):
     await message.answer(
         "Назад", reply_markup=keyboards.AdminMenuButtons().get_keyboard()
     )
 
+
 """Блок добавлениы времени"""
+
+
 class DataGame:
     @staticmethod
     @main_menu_admin.message(F.text == "Добавить дату игры")
@@ -37,7 +41,9 @@ class DataGame:
     @staticmethod
     @main_menu_admin.message(states.AddDateState.date, F.text)
     async def cmd_add_time(message: types.Message, state: FSMContext):
-        pattern = re.compile(r"^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d$")
+        pattern = re.compile(
+            r"^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d$"
+        )
         if not pattern.match(message.text):
             await message.answer("Неверный формат даты, попробуй ещё раз.")
             return
@@ -51,6 +57,7 @@ class DataGame:
         )
 
         await state.clear()
+
 
 class NewGroup:
     @staticmethod
@@ -85,8 +92,6 @@ class NewGroup:
         )
 
         await state.clear()
-
-
 
 
 class InfoPlayers:
@@ -175,6 +180,7 @@ class InfoPlayers:
 
         try:
             import shutil
+
             shutil.rmtree(f"images/{message.text}")
         except FileNotFoundError:
             pass
@@ -187,7 +193,6 @@ class InfoPlayers:
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
         )
         await state.clear()
-    
 
 
 class InventoryPlayers:
@@ -195,25 +200,25 @@ class InventoryPlayers:
     @main_menu_admin.message(F.text == "Инвентарь игрока...")
     async def cmd_inventory_players(message: types.Message):
         await message.answer(
-            "Что именно хотите?", reply_markup=keyboards.InventoryPlayers().get_keyboard()
+            "Что именно хотите?",
+            reply_markup=keyboards.InventoryPlayers().get_keyboard(),
         )
-        
+
     @staticmethod
     @main_menu_admin.message(F.text == "Добавить денег")
     async def cmd_add_money_name(message: types.Message, state: FSMContext):
         await message.answer("Отправте имя игрока")
-        
+
         await state.set_state(states.AddMoneyState.name)
-    
+
     @staticmethod
     @main_menu_admin.message(states.AddMoneyState.name, F.text)
     async def cmd_add_money(message: types.Message, state: FSMContext):
-        
-        await state.update_data(name = message.text)
+        await state.update_data(name=message.text)
         await message.answer("Количество денег")
 
         await state.set_state(states.AddMoneyState.money)
-    
+
     @staticmethod
     @main_menu_admin.message(states.AddMoneyState.money, F.text)
     async def cmd_add_money_complete(message: types.Message, state: FSMContext):
@@ -231,19 +236,18 @@ class InventoryPlayers:
     @main_menu_admin.message(F.text == "Забрать деньги")
     async def cmd_take_money_name(message: types.Message, state: FSMContext):
         await message.answer("Отправте имя игрока")
-        
+
         await state.set_state(states.TakeMoneyState.name)
-    
+
     @staticmethod
     @main_menu_admin.message(states.TakeMoneyState.name, F.text)
     async def cmd_take_money(message: types.Message, state: FSMContext):
-        
-        await state.update_data(name = message.text)
+        await state.update_data(name=message.text)
         await message.answer("Количество денег")
 
         await state.set_state(states.TakeMoneyState.money)
-    
-    @staticmethod #TODO Можем уйти в минус
+
+    @staticmethod  # TODO Можем уйти в минус
     @main_menu_admin.message(states.TakeMoneyState.money, F.text)
     async def cmd_take_money_complete(message: types.Message, state: FSMContext):
         name = (await state.get_data()).get("name")
@@ -255,5 +259,52 @@ class InventoryPlayers:
                 await message.answer(f"Игрок {name} имеет {money}!")
         except Exception as e:
             await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
-        
-        
+
+    @staticmethod
+    @main_menu_admin.message(F.text == "Добавить вещь")
+    async def cmd_add_item_name_player(message: types.Message, state: FSMContext):
+        await message.answer("Отправте имя игрока")
+
+        await state.set_state(states.AddItemState.name_player)
+
+    @staticmethod
+    @main_menu_admin.message(states.AddItemState.name_player, F.text)
+    async def cmd_add_item_name(message: types.Message, state: FSMContext):
+        await state.update_data(name_player=message.text)
+        await message.answer("Название вещи")
+
+        await state.set_state(states.AddItemState.name_item)
+
+    @staticmethod
+    @main_menu_admin.message(states.AddItemState.name_item, F.text)
+    async def cmd_add_item_price(message: types.Message, state: FSMContext):
+        await state.update_data(name_item=message.text)
+        await message.answer("Цена вещи")
+
+        await state.set_state(states.AddItemState.price_item)
+
+    @staticmethod
+    @main_menu_admin.message(states.AddItemState.price_item, F.text)
+    async def cmd_add_item_description(message: types.Message, state: FSMContext):
+        await state.update_data(price_item=message.text)
+        await message.answer("Описание вещи")
+
+        await state.set_state(states.AddItemState.description)
+
+    @staticmethod
+    @main_menu_admin.message(states.AddItemState.description, F.text)
+    async def cmd_add_item_complete(message: types.Message, state: FSMContext):
+        await state.update_data(description=message.text)
+        try:
+            await PlayerOrm.add_new_item(
+                (await state.get_data()).get("name_player"),
+                (await state.get_data()).get("name_item"),
+                int((await state.get_data()).get("price_item")),
+                (await state.get_data()).get("description"),
+            )
+        except ValueError as e:
+            await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
+        await message.answer(
+            "Вещь успешно добавлена",
+            reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
+        )

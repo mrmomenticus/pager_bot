@@ -35,3 +35,9 @@ class AddMoneyState(StatesGroup):
 class TakeMoneyState(StatesGroup):
     name = State()
     money = State()
+    
+class AddItemState(StatesGroup):
+    name_player = State()
+    name_item = State()
+    price_item = State()
+    description = State()
