@@ -57,6 +57,7 @@ class Player(Base):
     __tablename__ = "Players"
     id_tg: Mapped[int] = MappedColumn(primary_key=True)
     inventory: Mapped["Inventory"] = relationship(back_populates="player")
+    game_id: Mapped[int] = MappedColumn(ForeignKey("Game.number_group"))
     game: Mapped[list["Game"]] = relationship("Game", back_populates="players")
     username: Mapped[str] = MappedColumn(String(255))
     player_name: Mapped[str] = MappedColumn(String(255))
@@ -73,7 +74,6 @@ class Player(Base):
 class Game(Base):
     __tablename__ = "Game"
     number_group: Mapped[int] = MappedColumn(primary_key=True)
-    player_id: Mapped[int] = MappedColumn(Integer, ForeignKey("Players.id_tg"))
     game_name: Mapped[str] = MappedColumn(String(255))
     date = MappedColumn(Date())
     players: Mapped[list["Player"]] = relationship("Player", back_populates="game")
