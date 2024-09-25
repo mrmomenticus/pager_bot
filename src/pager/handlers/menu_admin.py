@@ -49,6 +49,7 @@ class DataGame:
             return
 
         data = await state.get_data()
+        
         await GameOrm.set_date_game(int(data["number_group"]), message.text)
 
         await message.answer(
@@ -340,3 +341,28 @@ class InventoryPlayers:
             )
         except ValueError as e:
             await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
+            
+    @staticmethod
+    @main_menu_admin.message(F.text == "Узнать инвентарь игрока")
+    async def cmd_all_inventory(message: types.Message, state: FSMContext):
+        await message.answer("Отправте имя игрока")
+
+        await state.set_state(states.AllInventoryPlayer.name_player)
+        
+    @staticmethod
+    @main_menu_admin.message(states.AllInventoryPlayer.name_player, F.text)
+    async def cmd_all_inventory_complete(message: types.Message, state: FSMContext):
+        try:
+            stuffs = await PlayerOrm.select_all_stuff(message.text)
+            
+            money = await PlayerOrm.select_money(message.text)
+            
+            await message.answer(f"Игрок {message.text} имеет: ")
+            for stuff in stuffs:
+                await message.answer(f"Название: {stuff.title}\nЦена: {stuff.price}\nОписание: {stuff.description}")
+            await message.answer(f"А также сумму {money} денег")
+            
+        except ValueError as e:
+            await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
+        
+    

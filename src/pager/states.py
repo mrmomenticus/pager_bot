@@ -46,3 +46,7 @@ class DeleteItemState(StatesGroup):
     name_player = State()
     name_item = State()
     delete_item = State()
+    
+class AllInventoryPlayer(StatesGroup):
+    name_player = State()
+    ok = State()

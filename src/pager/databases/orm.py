@@ -248,6 +248,24 @@ class PlayerOrm:
                     raise NotFoundError(Stuff.__tablename__, name_item, name_player)
             except SQLAlchemyError as e:
                 logging.error(e)
+    
+    @connection
+    @staticmethod
+    async def select_all_stuff(session, name_player: str):
+        stmt = (
+            select(Stuff)
+            .join(Inventory, Stuff.invetory_id == Inventory.id)
+            .join(Player, Inventory.player_id == Player.id_tg)
+            .where(Player.player_name == name_player)
+        )
+        result = await session.execute(stmt)
+        stuff = result.scalars().all()
+        logging.debug(f"Type of stuff: {type(stuff)}")
+        if stuff is not None:
+            return stuff
+        else: 
+            return None
+        
 
 
 class GameOrm:
