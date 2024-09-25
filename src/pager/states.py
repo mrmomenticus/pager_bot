@@ -41,3 +41,8 @@ class AddItemState(StatesGroup):
     name_item = State()
     price_item = State()
     description = State()
+    
+class DeleteItemState(StatesGroup):
+    name_player = State()
+    name_item = State()
+    delete_item = State()

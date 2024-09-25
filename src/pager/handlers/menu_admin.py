@@ -229,6 +229,7 @@ class InventoryPlayers:
                 await message.answer(f"Игрок {name} не найден!")
             else:
                 await message.answer(f"Игрок {name} имеет {money}!")
+                await state.clear()
         except Exception as e:
             await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
 
@@ -296,15 +297,46 @@ class InventoryPlayers:
     async def cmd_add_item_complete(message: types.Message, state: FSMContext):
         await state.update_data(description=message.text)
         try:
-            await PlayerOrm.add_new_item(
+            await PlayerOrm.add_new_stuff(
                 (await state.get_data()).get("name_player"),
                 (await state.get_data()).get("name_item"),
                 int((await state.get_data()).get("price_item")),
                 (await state.get_data()).get("description"),
             )
-        except ValueError as e:
+        except Exception as e:
             await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
         await message.answer(
             "Вещь успешно добавлена",
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
         )
+        await state.clear()
+
+    @staticmethod
+    @main_menu_admin.message(F.text == "Удалить вещь")
+    async def cmd_delete_item_name_player(message: types.Message, state: FSMContext):
+        await message.answer("Отправте имя игрока")
+
+        await state.set_state(states.DeleteItemState.name_player)
+
+    @staticmethod
+    @main_menu_admin.message(states.DeleteItemState.name_player, F.text)
+    async def cmd_delete_item_name(message: types.Message, state: FSMContext):
+        await state.update_data(name_player=message.text)
+
+        await message.answer("Название вещи")
+
+        await state.set_state(states.DeleteItemState.name_item)
+
+    @staticmethod
+    @main_menu_admin.message(states.DeleteItemState.name_item, F.text)
+    async def cmd_delete_item_complete(message: types.Message, state: FSMContext):
+        try:
+            await PlayerOrm.delete_stuff(
+                (await state.get_data()).get("name_player"), message.text
+            )
+            await message.answer(
+                "Вещь успешно удалена",
+                reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
+            )
+        except ValueError as e:
+            await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
