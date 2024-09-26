@@ -202,7 +202,7 @@ class InventoryPlayers:
     async def cmd_inventory_players(message: types.Message):
         await message.answer(
             "Что именно хотите?",
-            reply_markup=keyboards.InventoryPlayers().get_keyboard(),
+            reply_markup=keyboards.InventoryPlayersForAdmin().get_keyboard(),
         )
 
     @staticmethod
