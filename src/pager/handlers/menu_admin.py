@@ -10,20 +10,46 @@ import re
 
 main_menu_admin = Router()
 
-
-@main_menu_admin.message(F.text == "Назад")
-async def cmd_back(message: types.Message):
-    await message.answer(
-        "Назад", reply_markup=keyboards.AdminMenuButtons().get_keyboard()
-    )
-
-
-"""Блок добавлениы времени"""
-
+class MainMenu:
+    @staticmethod
+    @main_menu_admin.message(F.text == "Организация игры...")
+    async def cmd_main_menu(message: types.Message):
+        await message.answer(
+            "Выберите действие", reply_markup=keyboards.AdminOrganization().get_keyboard()
+        )
+    
+    @staticmethod
+    @main_menu_admin.message(F.text == "Игра...")
+    async def cmd_main_menu_game(message: types.Message):
+        await message.answer(
+            "Выберите действие", reply_markup=keyboards.AdminGame().get_keyboard()
+        )
+    
+    @staticmethod
+    @main_menu_admin.message(F.text == "Информация по игрокам...")
+    async def cmd_main_menu_info_players(message: types.Message):
+        await message.answer(
+            "Выберите действие", reply_markup=keyboards.AdminInformationPlayer().get_keyboard()
+        )
+        
+    @staticmethod
+    @main_menu_admin.message(F.text == "Инвентарь игрока...")
+    async def cmd_main_menu_inventory_players(message: types.Message):
+        await message.answer(
+            "Выберите действие", reply_markup=keyboards.AdminInventoryPlayers().get_keyboard()
+        )
+    
+    @staticmethod
+    @main_menu_admin.message(F.text == "Назад")
+    async def cmd_back(message: types.Message):
+        await message.answer(
+           "Возвращаю", reply_markup=keyboards.AdminMenuButtons().get_keyboard()
+      )
+        
 
 class DataGame:
     @staticmethod
-    @main_menu_admin.message(F.text == "Добавить дату игры")
+    @main_menu_admin.message(F.text == "Добавить дату")
     async def cmd_number_group(message: types.Message, state: FSMContext):
         await message.answer("Введи номер пачки")
 
@@ -100,7 +126,7 @@ class InfoPlayers:
     @main_menu_admin.message(F.text == "Информация по игрокам...")
     async def cmd_info_players(message: types.Message):
         await message.answer(
-            "Что хотите?", reply_markup=keyboards.InformationPlayers().get_keyboard()
+            "Что хотите?", reply_markup=keyboards.AdminInformationPlayer().get_keyboard()
         )
 
     @staticmethod
@@ -202,7 +228,7 @@ class InventoryPlayers:
     async def cmd_inventory_players(message: types.Message):
         await message.answer(
             "Что именно хотите?",
-            reply_markup=keyboards.InventoryPlayersForAdmin().get_keyboard(),
+            reply_markup=keyboards.AdminInventoryPlayers().get_keyboard(),
         )
 
     @staticmethod

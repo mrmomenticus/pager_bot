@@ -1,6 +1,6 @@
 import logging
 from sqlalchemy import func, select
-from pager.databases.core import Game, Player, Inventory, Stuff, async_session_factory
+from pager.databases.core import Game, Player, Inventory, Stuff,  async_session_factory
 from pager.exeption import NotFoundError
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -80,7 +80,7 @@ class PlayerOrm:
     async def update_new_player(session, new_player: Player):
         async with session.begin():
             session.add(new_player)
-            session.add(Inventory(player_id=new_player.id_tg))
+            session.add(Inventory(player_id=new_player.id_tg, money=0))
             await session.commit()
 
     """
@@ -266,7 +266,14 @@ class PlayerOrm:
         else: 
             return None
         
-
+# class NpcOrm:
+#     @connection
+#     @staticmethod
+#     async def get_npcs(session, number_group: int):
+#         stmt = select(Npc).where(Npc.number_group == number_group)
+#         result = await session.execute(stmt)
+#         npcs = result.scalars().all()
+#         return npcs
 
 class GameOrm:
     @connection

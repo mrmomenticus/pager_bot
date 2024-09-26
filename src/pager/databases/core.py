@@ -58,7 +58,6 @@ class Player(Base):
     id_tg: Mapped[int] = MappedColumn(primary_key=True)
     inventory: Mapped["Inventory"] = relationship(back_populates="player")
     game_id: Mapped[int] = MappedColumn(ForeignKey("Game.number_group"))
-    game: Mapped[list["Game"]] = relationship("Game", back_populates="players")
     username: Mapped[str] = MappedColumn(String(255))
     player_name: Mapped[str] = MappedColumn(String(255))
     is_admin: Mapped[bool] = MappedColumn(Boolean(), default=False)
@@ -76,8 +75,11 @@ class Game(Base):
     number_group: Mapped[int] = MappedColumn(primary_key=True)
     game_name: Mapped[str] = MappedColumn(String(255))
     date = MappedColumn(Date())
-    players: Mapped[list["Player"]] = relationship("Player", back_populates="game")
+    
+    players: Mapped[list["Player"]] = relationship("Player", backref="game")
 
+    # npc: Mapped["Npc"] = relationship("Npc", back_populates="game")
+    # tasks: Mapped["Tasks"] = relationship("Tasks", back_populates="game")
 
     def __str__(self):
         return f"{self.date}"
@@ -102,6 +104,23 @@ class Stuff(Base):
     
     inventory: Mapped["Inventory"] = relationship(back_populates="stuff")
     
+# class Npc(Base):
+#     __tablename__ = "Npc"
+#     id: Mapped[int] = MappedColumn(Integer, primary_key=True, autoincrement=True)
+#     game_id: Mapped[int] = MappedColumn(ForeignKey("Game.number_group"))
+#     name: Mapped[str] = MappedColumn(String(255))
+#     description: Mapped[str] = MappedColumn(String(255))
+    
+#     game: Mapped["Game"] = relationship(back_populates="npcs")
+    
+# class Tasks(Base):
+#     __tablename__ = "Tasks"
+#     id: Mapped[int] = MappedColumn(Integer, primary_key=True, autoincrement=True)
+#     name: Mapped[str] = MappedColumn(String(255))
+#     description: Mapped[str] = MappedColumn(String(255))
+    
+    
+#     game: Mapped["Game"] = relationship("Game", back_populates="tasks")
 
 async_engine = created_engine()
 

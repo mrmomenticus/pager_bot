@@ -1,6 +1,5 @@
 from aiogram.fsm.state import StatesGroup, State
 
-
 class RegisterState(StatesGroup):
     is_admin = State()
     number_group = State()
@@ -50,3 +49,9 @@ class DeleteItemState(StatesGroup):
 class AllInventoryPlayer(StatesGroup):
     name_player = State()
     ok = State()
+    
+class AddNPCState(StatesGroup):
+    group_name = State()
+    npc_name = State()
+    description = State()
+    
