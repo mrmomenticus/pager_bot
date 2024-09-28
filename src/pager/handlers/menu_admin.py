@@ -49,7 +49,7 @@ class MainMenu:
 
 class DataGame:
     @staticmethod
-    @main_menu_admin.message(F.text == "Добавить дату")
+    @main_menu_admin.message(F.text == "Добавить дату игры")
     async def cmd_number_group(message: types.Message, state: FSMContext):
         await message.answer("Введи номер пачки")
 

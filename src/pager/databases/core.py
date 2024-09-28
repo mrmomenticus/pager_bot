@@ -61,7 +61,10 @@ class Player(Base):
     username: Mapped[str] = MappedColumn(String(255))
     player_name: Mapped[str] = MappedColumn(String(255))
     is_admin: Mapped[bool] = MappedColumn(Boolean(), default=False)
-    photo_state = Column(ARRAY(String), nullable=True) #TODO: в дальнейшем может отдельной таблицей
+    photo_state = Column(ARRAY(String), nullable=True)
+    
+    game: Mapped["Game"] = relationship(back_populates="players")  # Это свойство должно быть здесь
+    
     
     def clear(self):
         self.id_tg = None
@@ -76,8 +79,8 @@ class Game(Base):
     game_name: Mapped[str] = MappedColumn(String(255))
     date = MappedColumn(Date())
     
-    players: Mapped[list["Player"]] = relationship("Player", backref="game")
-
+    players: Mapped[list["Player"]] = relationship("Player", back_populates="game")
+    
     # npc: Mapped["Npc"] = relationship("Npc", back_populates="game")
     # tasks: Mapped["Tasks"] = relationship("Tasks", back_populates="game")
 

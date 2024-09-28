@@ -1,6 +1,7 @@
 from aiogram.types import KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
+
 class RegistredButton(ReplyKeyboardBuilder):
     def __init__(self, size: list = (3, 3)) -> None:
         self._buttons = KeyboardButton(text="Зарегистрироваться")
@@ -15,14 +16,15 @@ class RegistredButton(ReplyKeyboardBuilder):
             input_field_placeholder="Выберите пункт меню...",
         )
 
+
 # Класс для вывода основго меню игрока.
 class PlayerMenuButtons:
     def __init__(self, size: list = (3, 3)) -> None:
         self._buttons = (
-            KeyboardButton(text="Организация игры..."),
+            KeyboardButton(text="Организация..."),
             KeyboardButton(text="Инвентарь и статы..."),
-            KeyboardButton(text="Игра..."),
-            KeyboardButton(text="Справка..."),
+#           KeyboardButton(text="Все по игре..."),
+#           KeyboardButton(text="Справка..."),
         )
         self.builder = ReplyKeyboardBuilder()
         self.builder.add(*self._buttons)
@@ -34,6 +36,7 @@ class PlayerMenuButtons:
             one_time_keyboard=False,
             input_field_placeholder="Выберите пункт меню...",
         )
+
 
 class PlayerOrganization:
     def __init__(self, size: list = (3, 3)) -> None:
@@ -51,6 +54,7 @@ class PlayerOrganization:
             one_time_keyboard=False,
             input_field_placeholder="Выберите пункт меню...",
         )
+
 
 class PlayerInventory:
     def __init__(self, size: list = (3, 3)) -> None:
@@ -75,7 +79,7 @@ class PlayerInventory:
 class PlayerHelp:
     def __init__(self, size: list = (3, 3)) -> None:
         self._buttons = (
-            #KeyboardButton(text="Хронология игры"),
+            # KeyboardButton(text="Хронология игры"),
             # KeyboardButton(text="Карта мира"),
             # KeyboardButton(text="Правила игры"),
             KeyboardButton(text="Назад"),
@@ -96,6 +100,7 @@ class PlayerGame:
     """
     Класс для вывода меню игрока в игре. Вызывается с помощь юкоманды "Игра..."
     """
+
     def __init__(self, size: list = (3, 3)) -> None:
         self._buttons = (
             KeyboardButton(text="Список задания группы"),
@@ -139,22 +144,9 @@ class AdminGame:
         self._buttons = (
             KeyboardButton(text="Добавить NPC"),
             KeyboardButton(text="Добавить задание"),
-            KeyboardButton(text="Список заданий"),
-            KeyboardButton(text="Список NPC"),
-        )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
-
-class AdminOrganization:
-    def __init__(self, size: list = (3, 3)) -> None:
-        self._buttons = (
-            KeyboardButton(text="Добавить дату игры"),
-            KeyboardButton(text="Добавить группу"),
-            #KeyboardButton(text="Написать игроку"),
-            KeyboardButton(text="Добавить задание..."),
-            KeyboardButton(text="Добавить НПС..."),
-            KeyboardButton(text="Инвентарь игрока..."),
+            #            KeyboardButton(text="Список заданий"),
+            #            KeyboardButton(text="Список NPC"),
+            KeyboardButton(text="Назад"),
         )
         self.builder = ReplyKeyboardBuilder()
         self.builder.add(*self._buttons)
@@ -166,6 +158,27 @@ class AdminOrganization:
             one_time_keyboard=False,
             input_field_placeholder="Выберите пункт меню...",
         )
+
+
+class AdminOrganization:
+    def __init__(self, size: list = (3, 3)) -> None:
+        self._buttons = (
+            KeyboardButton(text="Добавить дату игры"),
+            KeyboardButton(text="Добавить группу"),
+            # KeyboardButton(text="Написать игроку"),
+            KeyboardButton(text="Назад"),
+        )
+        self.builder = ReplyKeyboardBuilder()
+        self.builder.add(*self._buttons)
+        self.builder.adjust(*size, True)
+
+    def get_keyboard(self):
+        return self.builder.as_markup(
+            resize_keyboard=True,
+            one_time_keyboard=False,
+            input_field_placeholder="Выберите пункт меню...",
+        )
+
 
 class AdminInformationPlayer(ReplyKeyboardBuilder):
     def __init__(self, size: list = (3, 3)) -> None:
