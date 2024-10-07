@@ -63,14 +63,21 @@ class Inventory:
     @staticmethod
     @main_menu_players.message(F.text == "Мои вещи")
     async def cmd_stuff_players(message: types.Message):
-        player = await PlayerOrm.select_player_from_id(message.from_user.id)
-        stuffs = await PlayerOrm.select_all_stuff(player.player_name)
+        try:
+            player = await PlayerOrm.select_player_from_id(message.from_user.id)
+            stuffs = await PlayerOrm.select_all_stuff(player.player_name)
+        except Exception as e:
+            logging.error(f"Error: {e}, id {message.from_user.id}")
+            return await message.answer("Возникли проблемы. Обратись к @Mrmomenticus")
         if player is None:
             await message.answer("Странно, но ваши данные не найдены")
         else:
-            await message.answer("Ваши вещи: ")
-            for stuff in stuffs:
-                await message.answer(f"Название: {stuff.title}\nЦена: {stuff.price}\nОписание: {stuff.description}")
+            if stuffs is None:
+                await message.answer("Ваших вещей нет")
+            else:
+                await message.answer("Ваши вещи: ")
+                for stuff in stuffs:
+                    await message.answer(f"Название: {stuff.title}\nЦена: {stuff.price}\nОписание: {stuff.description}")
                 
     @staticmethod
     @main_menu_players.message(F.text == "Мои деньги")

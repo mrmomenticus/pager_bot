@@ -6,48 +6,68 @@ from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases.orm import PlayerOrm, GameOrm
 from pager.databases import core
+from pager.bot import BotManager
 import re
 
 main_menu_admin = Router()
 
+
 class MainMenu:
+    """Handle main menu buttons"""
+
     @staticmethod
     @main_menu_admin.message(F.text == "Организация игры...")
-    async def cmd_main_menu(message: types.Message):
+    async def cmd_organization(message: types.Message):
+        """Handle 'Организация игры...' button"""
         await message.answer(
-            "Выберите действие", reply_markup=keyboards.AdminOrganization().get_keyboard()
+            "Выберите действие",
+            reply_markup=keyboards.AdminOrganization().get_keyboard(),
         )
-    
+
     @staticmethod
     @main_menu_admin.message(F.text == "Игра...")
-    async def cmd_main_menu_game(message: types.Message):
+    async def cmd_game(message: types.Message):
+        """Handle 'Игра...' button"""
         await message.answer(
             "Выберите действие", reply_markup=keyboards.AdminGame().get_keyboard()
         )
-    
+
     @staticmethod
     @main_menu_admin.message(F.text == "Информация по игрокам...")
-    async def cmd_main_menu_info_players(message: types.Message):
+    async def cmd_info_players(message: types.Message):
+        """Handle 'Информация по игрокам...' button"""
         await message.answer(
-            "Выберите действие", reply_markup=keyboards.AdminInformationPlayer().get_keyboard()
+            "Выберите действие",
+            reply_markup=keyboards.AdminInformationPlayer().get_keyboard(),
         )
-        
+
     @staticmethod
     @main_menu_admin.message(F.text == "Инвентарь игрока...")
-    async def cmd_main_menu_inventory_players(message: types.Message):
+    async def cmd_inventory_players(message: types.Message):
+        """Handle 'Инвентарь игрока...' button"""
         await message.answer(
-            "Выберите действие", reply_markup=keyboards.AdminInventoryPlayers().get_keyboard()
+            "Выберите действие",
+            reply_markup=keyboards.AdminInventoryPlayers().get_keyboard(),
         )
-    
+
     @staticmethod
     @main_menu_admin.message(F.text == "Назад")
     async def cmd_back(message: types.Message):
+        """Handle 'Назад' button"""
         await message.answer(
-           "Возвращаю", reply_markup=keyboards.AdminMenuButtons().get_keyboard()
-      )
-        
+            "Возвращаю", reply_markup=keyboards.AdminMenuButtons().get_keyboard()
+        )
+
 
 class DataGame:
+    @staticmethod
+    async def _notification_group(number_group: int, message_str: str, new_data
+    ):
+        bot_manager = BotManager()
+        players = await GameOrm.get_players_from_game(number_group)
+        for player in players:
+            await bot_manager.get_pager_bot().get_raw_bot().send_message(player.id_tg, f"{message_str}: {new_data}")
+
     @staticmethod
     @main_menu_admin.message(F.text == "Добавить дату игры")
     async def cmd_number_group(message: types.Message, state: FSMContext):
@@ -75,12 +95,16 @@ class DataGame:
             return
 
         data = await state.get_data()
-        
+
         await GameOrm.set_date_game(int(data["number_group"]), message.text)
 
         await message.answer(
             "Дата успешно добавлена",
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
+        )
+
+        await DataGame._notification_group(
+            int(data["number_group"]), "Обновление даты игры", message.text
         )
 
         await state.clear()
@@ -126,7 +150,8 @@ class InfoPlayers:
     @main_menu_admin.message(F.text == "Информация по игрокам...")
     async def cmd_info_players(message: types.Message):
         await message.answer(
-            "Что хотите?", reply_markup=keyboards.AdminInformationPlayer().get_keyboard()
+            "Что хотите?",
+            reply_markup=keyboards.AdminInformationPlayer().get_keyboard(),
         )
 
     @staticmethod
@@ -367,28 +392,28 @@ class InventoryPlayers:
             )
         except ValueError as e:
             await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
-            
+
     @staticmethod
     @main_menu_admin.message(F.text == "Узнать инвентарь игрока")
     async def cmd_all_inventory(message: types.Message, state: FSMContext):
         await message.answer("Отправте имя игрока")
 
         await state.set_state(states.AllInventoryPlayer.name_player)
-        
+
     @staticmethod
     @main_menu_admin.message(states.AllInventoryPlayer.name_player, F.text)
     async def cmd_all_inventory_complete(message: types.Message, state: FSMContext):
         try:
             stuffs = await PlayerOrm.select_all_stuff(message.text)
-            
+
             money = await PlayerOrm.select_money(message.text)
-            
+
             await message.answer(f"Игрок {message.text} имеет: ")
             for stuff in stuffs:
-                await message.answer(f"Название: {stuff.title}\nЦена: {stuff.price}\nОписание: {stuff.description}")
+                await message.answer(
+                    f"Название: {stuff.title}\nЦена: {stuff.price}\nОписание: {stuff.description}"
+                )
             await message.answer(f"А также сумму {money} денег")
-            
+
         except ValueError as e:
             await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
-        
-    

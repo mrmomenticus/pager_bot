@@ -3,7 +3,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 
 class RegistredButton(ReplyKeyboardBuilder):
-    def __init__(self, size: list = (3, 3)) -> None:
+    def __init__(self, size: list = (2, 2)) -> None:
         self._buttons = KeyboardButton(text="Зарегистрироваться")
         self.builder = ReplyKeyboardBuilder()
         self.builder.add(self._buttons)
@@ -19,7 +19,7 @@ class RegistredButton(ReplyKeyboardBuilder):
 
 # Класс для вывода основго меню игрока.
 class PlayerMenuButtons:
-    def __init__(self, size: list = (3, 3)) -> None:
+    def __init__(self, size: list = (2, 2)) -> None:
         self._buttons = (
             KeyboardButton(text="Организация..."),
             KeyboardButton(text="Инвентарь и статы..."),
@@ -39,7 +39,7 @@ class PlayerMenuButtons:
 
 
 class PlayerOrganization:
-    def __init__(self, size: list = (3, 3)) -> None:
+    def __init__(self, size: list = (2, 2)) -> None:
         self._buttons = (
             KeyboardButton(text="Когда игра?"),
             KeyboardButton(text="Назад"),
@@ -57,7 +57,7 @@ class PlayerOrganization:
 
 
 class PlayerInventory:
-    def __init__(self, size: list = (3, 3)) -> None:
+    def __init__(self, size: list = (2, 2)) -> None:
         self._buttons = (
             KeyboardButton(text="Мои статы"),
             KeyboardButton(text="Мои вещи"),
@@ -101,7 +101,7 @@ class PlayerGame:
     Класс для вывода меню игрока в игре. Вызывается с помощь юкоманды "Игра..."
     """
 
-    def __init__(self, size: list = (3, 3)) -> None:
+    def __init__(self, size: list = (2, 2)) -> None:
         self._buttons = (
             KeyboardButton(text="Список задания группы"),
             KeyboardButton(text="Список знакомых НПС"),
@@ -120,7 +120,7 @@ class PlayerGame:
 
 
 class AdminMenuButtons:
-    def __init__(self, size: list = (3, 3)) -> None:
+    def __init__(self, size: list = (1, 1, 1)) -> None:
         self._buttons = (
             KeyboardButton(text="Организация игры..."),
             KeyboardButton(text="Игра..."),
@@ -140,7 +140,7 @@ class AdminMenuButtons:
 
 
 class AdminGame:
-    def __init__(self, size: list = (3, 3)) -> None:
+    def __init__(self, size: list = (2, 2)) -> None:
         self._buttons = (
             KeyboardButton(text="Добавить NPC"),
             KeyboardButton(text="Добавить задание"),
@@ -161,7 +161,7 @@ class AdminGame:
 
 
 class AdminOrganization:
-    def __init__(self, size: list = (3, 3)) -> None:
+    def __init__(self, size: list = (1, 1)) -> None:
         self._buttons = (
             KeyboardButton(text="Добавить дату игры"),
             KeyboardButton(text="Добавить группу"),
@@ -181,7 +181,7 @@ class AdminOrganization:
 
 
 class AdminInformationPlayer(ReplyKeyboardBuilder):
-    def __init__(self, size: list = (3, 3)) -> None:
+    def __init__(self, size: list = (1, 1)) -> None:
         self._buttons = (
             KeyboardButton(text="Добавить информацию"),
             KeyboardButton(text="Получить информацию"),
@@ -201,7 +201,7 @@ class AdminInformationPlayer(ReplyKeyboardBuilder):
 
 
 class AdminInventoryPlayers(ReplyKeyboardBuilder):
-    def __init__(self, size: list = (3, 3)) -> None:
+    def __init__(self, size: list = (2, 2)) -> None:
         self._buttons = (
             KeyboardButton(text="Добавить вещь"),
             KeyboardButton(text="Добавить денег"),
