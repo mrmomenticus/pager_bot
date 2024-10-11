@@ -1,6 +1,6 @@
 import logging
 from sqlalchemy import func, select
-from pager.databases.core import Game, Player, Inventory, Stuff, async_session_factory
+from pager.databases.models import Game, Player, Inventory, Stuff, async_session_factory
 from pager.exeption import NotFoundError
 from sqlalchemy.exc import SQLAlchemyError
 

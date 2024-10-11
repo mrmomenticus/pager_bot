@@ -4,13 +4,13 @@
 
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
-from pager.databases import orm, core
+from pager.databases import models, orm
 import logging
 from aiogram import F, Router, types
 
 register_route = Router()
 
-new_player = core.Player()
+new_player = models.Player()
 
 
 @register_route.message(F.text == "Зарегистрироваться")
