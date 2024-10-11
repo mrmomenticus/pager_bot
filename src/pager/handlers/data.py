@@ -5,7 +5,6 @@ from pager.databases.orm import GameOrm, PlayerOrm
 from pager.bot import BotManager
 import re
 
-
 class DataAdmin:
     data_route = Router()
 
@@ -24,16 +23,13 @@ class DataAdmin:
     @data_route.message(F.text == "Добавить дату игры")
     async def cmd_number_group(message: types.Message, state: FSMContext):
         await message.answer("Введи номер пачки")
-
         await state.set_state(states.AddDateState.number_group)
 
     @staticmethod
     @data_route.message(states.AddDateState.number_group, F.text)
     async def cmd_register_date(message: types.Message, state: FSMContext):
         await message.answer("Введи дату в формате дд.мм.гггг")
-
         await state.set_data({"number_group": message.text})
-
         await state.set_state(states.AddDateState.date)
 
     @staticmethod
@@ -49,22 +45,19 @@ class DataAdmin:
         data = await state.get_data()
 
         await GameOrm.set_date_game(int(data["number_group"]), message.text)
-
         await message.answer(
             "Дата успешно добавлена",
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
         )
-
         await DataAdmin._notification_group(
             int(data["number_group"]), "Обновление даты игры", message.text
         )
-
         await state.clear()
-
 
 
 class DataPlayer:
     data_route = Router()
+
     @staticmethod
     @data_route.message(F.text == "Когда игра?")
     async def cmd_when_game(message: types.Message):
@@ -72,4 +65,7 @@ class DataPlayer:
         if date is None:
             await message.answer("Даты игры не найдены")
         else:
-            await message.answer(f"Игра будет: {date.date.strftime('%d.%m.%Y')}", reply_markup=keyboards.PlayerMenuButtons().get_keyboard())
+            await message.answer(
+                f"Игра будет: {date.date.strftime('%d.%m.%Y')}",
+                reply_markup=keyboards.PlayerMenuButtons().get_keyboard(),
+            )

@@ -7,7 +7,7 @@ from pager.databases.orm import PlayerOrm
 from aiogram.types import FSInputFile
 
 
-class InfoAdmin:
+class StateAdmin:
     info_router = Router()
 
     @staticmethod
@@ -111,8 +111,9 @@ class InfoAdmin:
         await state.clear()
 
 
-class InfoPlayer:
+class StatePlayer:
     info_router = Router()
+
     @staticmethod
     @info_router.message(F.text == "Мои статы")
     async def cmd_info_players(message: types.Message):
@@ -127,4 +128,3 @@ class InfoPlayer:
                 except Exception as e:
                     logging.error(f"Братан, пиши разрабу, у нас ошибка! Error: {e}")
                     await message.answer(f"Error: {e}")
-    

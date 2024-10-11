@@ -1,6 +1,7 @@
 from aiogram import F, Router, types
 from pager import keyboards
 
+
 class MainMenu:
     route_admin = Router()
     """Handle main menu buttons"""

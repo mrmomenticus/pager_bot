@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from pager.bot import BotManager
-from pager.handlers import register, start, menu_admin, menu_players, data, inventory, group, info
+from pager.handlers import register, start, menu_admin, menu_players, data, inventory, group, state
 from pager.databases import models
 
 
@@ -21,8 +21,8 @@ async def main():
             inventory.InventoryAdmin.inventory_route,
             inventory.InventoryPlayer.inventory_player,
             group.GroupAdmin.group_router,
-            info.InfoAdmin.info_router,
-            info.InfoPlayer.info_router
+            state.StateAdmin.info_router,
+            state.StatePlayer.info_router
         ]
     )    
     logging.debug("Start polling")
