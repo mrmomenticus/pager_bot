@@ -2,7 +2,7 @@ from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases import models
-from pager.databases.orm import GameOrm
+from pager.databases.requests.game import GameOrm
 
 
 class GroupAdmin:

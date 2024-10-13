@@ -27,7 +27,7 @@ async def main():
     )    
     logging.debug("Start polling")
 
-    await models.init_database()
+    await models.Core().init_database()
 
     await bot_manager.start_bot()
 

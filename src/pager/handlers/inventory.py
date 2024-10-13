@@ -2,7 +2,7 @@ import logging
 from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
-from pager.databases.orm import PlayerOrm
+from pager.databases.requests.player import PlayerOrm
 
 
 class InventoryAdmin:
@@ -20,7 +20,6 @@ class InventoryAdmin:
     @inventory_route.message(F.text == "Добавить денег")
     async def add_money_name(message: types.Message, state: FSMContext):
         await message.answer("Отправте имя игрока")
-
         await state.set_state(states.AddMoneyState.name)
 
     @staticmethod

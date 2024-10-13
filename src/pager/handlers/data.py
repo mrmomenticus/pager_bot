@@ -1,7 +1,8 @@
 from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
-from pager.databases.orm import GameOrm, PlayerOrm
+from pager.databases.requests.game import GameOrm
+from pager.databases.requests.player import PlayerOrm
 from pager.bot import BotManager
 import re
 
@@ -57,7 +58,7 @@ class DataAdmin:
 
 class DataPlayer:
     data_route = Router()
-
+    
     @staticmethod
     @data_route.message(F.text == "Когда игра?")
     async def cmd_when_game(message: types.Message):
