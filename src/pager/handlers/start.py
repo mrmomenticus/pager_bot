@@ -1,7 +1,7 @@
 from aiogram import Router, types
 from aiogram.filters.command import CommandStart
 from pager import keyboards
-from pager.databases.orm import PlayerOrm
+from pager.databases.requests.player import PlayerOrm
 
 
 start_route = Router()

@@ -1,10 +1,9 @@
 from sqlalchemy import func, select
-from pager.databases.core import Core
-from pager.databases.models import Game, Player
+from pager.databases.models import Game, Player, Base
 
 
 class GameOrm:
-    @Core().connection
+    @Base().connection
     @staticmethod
     async def get_game_by_number_group(session, number_group: int) -> Game:
         stmt = select(Game).where(Game.number_group == number_group)
@@ -15,7 +14,7 @@ class GameOrm:
         else:
             return None
 
-    @Core().connection
+    @Base().connection
     @staticmethod
     async def set_date_game(session, number_group: int, date_str: str):
         async with session.begin():
@@ -25,7 +24,7 @@ class GameOrm:
             game.date = func.to_date(date_str, "DD.MM.YYYY")
             await session.commit()
 
-    @Core().connection
+    @Base().connection
     @staticmethod
     async def set_new_game(session, new_game: Game):
         async with session.begin():
@@ -33,7 +32,7 @@ class GameOrm:
             await session.commit()
             
             
-    @Core().connection
+    @Base().connection
     @staticmethod
     async def get_players_from_game(session, number_group: int):
         stmt = select(Player).join(Game).where(Game.number_group == number_group)

@@ -2,6 +2,7 @@ import logging
 from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
+from pager.databases.requests.inventory import InventoryOrm
 from pager.databases.requests.player import PlayerOrm
 
 
@@ -34,13 +35,14 @@ class InventoryAdmin:
     async def add_money_complete(message: types.Message, state: FSMContext):
         name = (await state.get_data()).get("name")
         try:
-            money = await PlayerOrm.update_money(name, int(message.text))
+            money = await InventoryOrm().update_money(name, int(message.text))
             if money is None:
                 await message.answer(f"Игрок {name} не найден!")
             else:
                 await message.answer(f"Игрок {name} имеет {money}!")
                 await state.clear()
         except Exception as e:
+            logging.critical(f"Ошибка: {e}, traceback: {e.__traceback__}, message: {message.text}")
             await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
 
     @staticmethod
@@ -61,7 +63,7 @@ class InventoryAdmin:
     async def take_money_complete(message: types.Message, state: FSMContext):
         name = (await state.get_data()).get("name")
         try:
-            money = await PlayerOrm.take_money(name, int(message.text))
+            money = await InventoryOrm().take_money(name, int(message.text))
             if money is None:
                 await message.answer(f"Игрок {name} не найден!")
             else:
@@ -69,78 +71,6 @@ class InventoryAdmin:
         except Exception as e:
             await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
 
-    @staticmethod
-    @inventory_route.message(F.text == "Добавить вещь")
-    async def add_item_name_player(message: types.Message, state: FSMContext):
-        await message.answer("Отправте имя игрока")
-        await state.set_state(states.AddItemState.name_player)
-
-    @staticmethod
-    @inventory_route.message(states.AddItemState.name_player, F.text)
-    async def add_item_name(message: types.Message, state: FSMContext):
-        await state.update_data(name_player=message.text)
-        await message.answer("Название вещи")
-        await state.set_state(states.AddItemState.name_item)
-
-    @staticmethod
-    @inventory_route.message(states.AddItemState.name_item, F.text)
-    async def add_item_price(message: types.Message, state: FSMContext):
-        await state.update_data(name_item=message.text)
-        await message.answer("Цена вещи")
-        await state.set_state(states.AddItemState.price_item)
-
-    @staticmethod
-    @inventory_route.message(states.AddItemState.price_item, F.text)
-    async def add_item_description(message: types.Message, state: FSMContext):
-        await state.update_data(price_item=message.text)
-        await message.answer("Описание вещи")
-        await state.set_state(states.AddItemState.description)
-
-    @staticmethod
-    @inventory_route.message(states.AddItemState.description, F.text)
-    async def add_item_complete(message: types.Message, state: FSMContext):
-        await state.update_data(description=message.text)
-        try:
-            await PlayerOrm.add_new_stuff(
-                (await state.get_data()).get("name_player"),
-                (await state.get_data()).get("name_item"),
-                int((await state.get_data()).get("price_item")),
-                (await state.get_data()).get("description"),
-            )
-        except Exception as e:
-            await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
-        await message.answer(
-            "Вещь успешно добавлена",
-            reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
-        )
-        await state.clear()
-
-    @staticmethod
-    @inventory_route.message(F.text == "Удалить вещь")
-    async def delete_item_name_player(message: types.Message, state: FSMContext):
-        await message.answer("Отправте имя игрока")
-        await state.set_state(states.DeleteItemState.name_player)
-
-    @staticmethod
-    @inventory_route.message(states.DeleteItemState.name_player, F.text)
-    async def delete_item_name(message: types.Message, state: FSMContext):
-        await state.update_data(name_player=message.text)
-        await message.answer("Название вещи")
-        await state.set_state(states.DeleteItemState.name_item)
-
-    @staticmethod
-    @inventory_route.message(states.DeleteItemState.name_item, F.text)
-    async def delete_item_complete(message: types.Message, state: FSMContext):
-        try:
-            await PlayerOrm.delete_stuff(
-                (await state.get_data()).get("name_player"), message.text
-            )
-            await message.answer(
-                "Вещь успешно удалена",
-                reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
-            )
-        except ValueError as e:
-            await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
 
     @staticmethod
     @inventory_route.message(F.text == "Узнать инвентарь игрока")
@@ -154,7 +84,7 @@ class InventoryAdmin:
         try:
             stuffs = await PlayerOrm.select_all_stuff(message.text)
 
-            money = await PlayerOrm.select_money(message.text)
+            money = await InventoryOrm.select_money(message.text)
 
             await message.answer(f"Игрок {message.text} имеет: ")
             for stuff in stuffs:
@@ -171,31 +101,10 @@ class InventoryPlayer:
     inventory_player = Router()
 
     @staticmethod
-    @inventory_player.message(F.text == "Мои вещи")
-    async def cmd_stuff_players(message: types.Message):
-        try:
-            player = await PlayerOrm.select_player_from_id(message.from_user.id)
-            stuffs = await PlayerOrm.select_all_stuff(player.player_name)
-        except Exception as e:
-            logging.error(f"Error: {e}, id {message.from_user.id}")
-            return await message.answer("Возникли проблемы. Обратись к @Mrmomenticus")
-        if player is None:
-            await message.answer("Странно, но ваши данные не найдены")
-        else:
-            if stuffs is None:
-                await message.answer("Ваших вещей нет")
-            else:
-                await message.answer("Ваши вещи: ")
-                for stuff in stuffs:
-                    await message.answer(
-                        f"Название: {stuff.title}\nЦена: {stuff.price}\nОписание: {stuff.description}"
-                    )
-
-    @staticmethod
     @inventory_player.message(F.text == "Мои деньги")
     async def cmd_money_players(message: types.Message):
         player = await PlayerOrm.select_player_from_id(message.from_user.id)
-        money = await PlayerOrm.select_money(player.player_name)
+        money = await InventoryOrm().select_money(player.player_name)
         if player is None:
             await message.answer("Странно, но ваши данные не найдены")
         else:

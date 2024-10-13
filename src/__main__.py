@@ -1,13 +1,25 @@
 import asyncio
 import logging
+from pager.logger import LoggerConfigurator
 
 from pager.bot import BotManager
-from pager.handlers import register, start, menu_admin, menu_players, data, inventory, group, state
-from pager.databases import models
+from pager.databases.models import Base
+from pager.handlers import (
+    register,
+    start,
+    menu_admin,
+    menu_players,
+    data,
+    inventory,
+    group,
+    state,
+)
 
 
 async def main():
-    logging.basicConfig(level=logging.DEBUG)
+    LoggerConfigurator().configure()
+    logging.info("Start bot")
+
     # Объект бота
     bot_manager = BotManager()
     bot_manager.get_pager_bot().add_routes(
@@ -22,12 +34,12 @@ async def main():
             inventory.InventoryPlayer.inventory_player,
             group.GroupAdmin.group_router,
             state.StateAdmin.info_router,
-            state.StatePlayer.info_router
+            state.StatePlayer.info_router,
         ]
-    )    
+    )
     logging.debug("Start polling")
 
-    await models.Core().init_database()
+    await Base().init_database()
 
     await bot_manager.start_bot()
 

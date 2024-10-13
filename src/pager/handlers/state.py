@@ -3,7 +3,7 @@ import os
 from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
-from pager.databases.orm import PlayerOrm
+from pager.databases.requests.player import PlayerOrm
 from aiogram.types import FSInputFile
 
 
