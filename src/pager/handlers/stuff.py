@@ -3,9 +3,11 @@ from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases.requests.stuff import StuffOrm
 from pager.databases.requests.player import PlayerOrm
+from pager.filter import IsAdmin
 
 class StuffAdmin:
     stuff_route = Router()
+    stuff_route.message.filter(IsAdmin)
     @staticmethod
     @stuff_route.message(F.text == "Добавить вещь")
     async def add_item_name_player(message: types.Message, state: FSMContext):

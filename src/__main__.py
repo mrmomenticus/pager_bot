@@ -1,8 +1,8 @@
 import asyncio
 import logging
-from pager.logger import LoggerConfigurator
+from pager.utils.logger import LoggerConfigurator
 
-from pager.bot import BotManager
+from pager.utils.bot import BotManager
 from pager.databases.models import Base
 from pager.handlers import (
     register,
@@ -19,7 +19,6 @@ from pager.handlers import (
 async def main():
     LoggerConfigurator().configure()
     logging.info("Start bot")
-
     # Объект бота
     bot_manager = BotManager()
     bot_manager.get_pager_bot().add_routes(
@@ -46,3 +45,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    

@@ -1,4 +1,4 @@
-from pager.configs import cfg
+from pager.utils.constants import BOT_TOKEN
 from aiogram import Bot, Dispatcher
 
 
@@ -10,7 +10,7 @@ class PagerBot:
         Инициализация бота.
         :param token: токен для бота
         """
-        self.bot = Bot(cfg["token"])
+        self.bot = Bot(BOT_TOKEN)
         self.dp = Dispatcher()
 
 

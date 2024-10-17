@@ -3,11 +3,13 @@ from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases.requests.game import GameOrm
 from pager.databases.requests.player import PlayerOrm
-from pager.bot import BotManager
+from pager.utils.bot import BotManager
 import re
+from pager.filter import IsAdmin
 
 class DataAdmin:
     data_route = Router()
+    data_route.message.filter(IsAdmin)
 
     @staticmethod
     async def _notification_group(number_group: int, message_str: str, new_data):

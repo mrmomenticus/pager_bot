@@ -3,10 +3,11 @@ from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases import models
 from pager.databases.requests.game import GameOrm
-
+from pager.filter import IsAdmin
 
 class GroupAdmin:
     group_router = Router()
+    group_router.message.filter(IsAdmin)
 
     @staticmethod
     @group_router.message(F.text == "Добавить группу")

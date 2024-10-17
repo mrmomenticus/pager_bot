@@ -6,9 +6,12 @@ from pager import keyboards, states
 from pager.databases.requests.player import PlayerOrm
 from aiogram.types import FSInputFile
 
+from pager.filter import IsAdmin
+
 
 class StateAdmin:
     info_router = Router()
+    info_router.message.filter(IsAdmin)
 
     @staticmethod
     @info_router.message(F.text == "Информация по игрокам...")

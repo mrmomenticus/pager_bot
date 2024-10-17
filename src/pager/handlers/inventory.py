@@ -4,10 +4,12 @@ from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases.requests.inventory import InventoryOrm
 from pager.databases.requests.player import PlayerOrm
+from pager.filter import IsAdmin
 
 
 class InventoryAdmin:
     inventory_route = Router()
+    inventory_route.message.filter(IsAdmin)
 
     @staticmethod
     @inventory_route.message(F.text == "Инвентарь игрока...")

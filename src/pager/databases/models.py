@@ -15,14 +15,18 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped, MappedColumn, relationship
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from pager import configs
+from pager.utils import configs
 
+def connection(func):
+        async def wrapper(*args, **kwargs):
+            async with Base().session() as session:
+                return await func(session, *args, **kwargs)
+
+            return wrapper
 
 class Base(DeclarativeBase):
     def __init__(self):
         self.engine = self.create_engine()
-        self.init_database()
-        self.is_database_exists()
         self.session = async_sessionmaker(self.engine)
 
     @staticmethod
@@ -51,13 +55,7 @@ class Base(DeclarativeBase):
             logging.error(f"Ошибка при проверке базы данных: {e}")
             return True  # База данных или таблица не существует
 
-    @staticmethod
-    def connection(func):
-        async def wrapper(*args, **kwargs):
-            async with Base().session() as session:
-                return await func(session, *args, **kwargs)
 
-            return wrapper
 
     async def init_database(self):
         async with Base().engine.begin() as conn:
