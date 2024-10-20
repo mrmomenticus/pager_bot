@@ -10,7 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 T = typing.TypeVar("T", bound=BaseModel) 
 
-class BaseDAO(typing.Generic[T]):
+class BaseRequest(typing.Generic[T]):
     _session = None
     _engine = None
     model: type[T]
@@ -42,7 +42,7 @@ class BaseDAO(typing.Generic[T]):
     @staticmethod #TODO: переделать
     def connection(func):
         async def wrapper(*args, **kwargs):
-            async with BaseDAO.session() as session:
+            async with BaseRequest.session() as session:
                 return await func(session, *args, **kwargs)
         return wrapper
     
@@ -88,4 +88,7 @@ class BaseDAO(typing.Generic[T]):
             await session.rollback()
             raise
         return new_instances
+    
+    
+    
     

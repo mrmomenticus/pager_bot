@@ -1,8 +1,10 @@
 from aiogram import F, Router, types
 from pager import keyboards
+from pager.filter import Role
 
 class MenuPlayers:
     route_players = Router()
+    route_players.message.filter(Role())
 
     @staticmethod
     @route_players.message(F.text == "Организация...")

@@ -4,7 +4,7 @@ from pager.utils.logger import LoggerConfigurator
 
 from pager.utils.bot import BotManager
 
-from pager.databases.requests.base import BaseDAO
+from pager.databases.requests.base import BaseRequest
 from pager.handlers import (
     register,
     start,
@@ -14,6 +14,7 @@ from pager.handlers import (
     inventory,
     group,
     state,
+    stuff
 )
 
 
@@ -35,11 +36,13 @@ async def main():
             group.GroupAdmin.group_router,
             state.StateAdmin.info_router,
             state.StatePlayer.info_router,
+            stuff.StuffAdmin.stuff_route,
+            stuff.StuffPlayer.stuff_route
         ]
     )
     logging.debug("Start polling")
 
-    await BaseDAO.init_database()
+    await BaseRequest.init_database()
 
     await bot_manager.start_bot()
 

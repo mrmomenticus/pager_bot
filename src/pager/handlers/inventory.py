@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases.requests.inventory import InventoryRequest
 from pager.databases.requests.player import PlayerRequest
+from pager.databases.requests.stuff import StuffRequest
 from pager.filter import Role
 
 
@@ -37,15 +38,16 @@ class InventoryAdmin:
     async def add_money_complete(message: types.Message, state: FSMContext):
         name = (await state.get_data()).get("name")
         try:
-            money = await InventoryRequest.update_money(name, int(message.text))
+            money = await InventoryRequest.update_money(player_name=name, money= int(message.text))
             if money is None:
                 await message.answer(f"Игрок {name} не найден!")
+                state.clear()
             else:
                 await message.answer(f"Игрок {name} имеет {money}!")
                 await state.clear()
         except Exception as e:
-            logging.critical(f"Ошибка: {e}, traceback: {e.__traceback__}, message: {message.text}")
-            await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
+            logging.error(f"Ошибка: {e}, traceback: {e.__traceback__}, message: {message.text}")
+            await message.answer("Возникла ошибка. Попробуйте позже")
 
     @staticmethod
     @inventory_route.message(F.text == "Забрать деньги")
@@ -65,7 +67,7 @@ class InventoryAdmin:
     async def take_money_complete(message: types.Message, state: FSMContext):
         name = (await state.get_data()).get("name")
         try:
-            money = await InventoryRequest.take_money(name, int(message.text))
+            money = await InventoryRequest.take_money(player_name=name, money= int(message.text))
             if money is None:
                 await message.answer(f"Игрок {name} не найден!")
             else:
@@ -84,7 +86,7 @@ class InventoryAdmin:
     @inventory_route.message(states.AllInventoryPlayer.name_player, F.text)
     async def all_inventory_complete(message: types.Message, state: FSMContext):
         try:
-            stuffs = await PlayerRequest.select_all_stuff(message.text)
+            stuffs = await StuffRequest.select_all_stuff(message.text)
 
             money = await InventoryRequest.select_money(message.text)
 

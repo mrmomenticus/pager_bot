@@ -1,23 +1,24 @@
 import logging
 from sqlalchemy import select
 from pager.databases.models import Inventory, Player, Stuff
-from exeption.exeption import NotFoundError
 from sqlalchemy.exc import SQLAlchemyError
 
-from pager.databases.requests.base import BaseDAO
+from pager.databases.requests.base import BaseRequest
+from pager.exeption.exeption import NotFoundError
 
-class StuffRequest(BaseDAO[Stuff]):
-    @BaseDAO.connection
+
+class StuffRequest(BaseRequest[Stuff]): 
     @staticmethod
+    @BaseRequest.connection
     async def add_new_stuff(
-        session, player_name: str, item_name: str, price_item: int, description: str
+        session, name_player: str, name_item: str, price_item: int, description: str
     ):
         stmt = (
             select(Stuff)
             .join(Inventory)
             .join(Player)
-            .where(Player.player_name == player_name)
-            .where(Stuff.title == item_name)
+            .where(Player.player_name == name_player)
+            .where(Stuff.title == name_item)
         )
         result = await session.execute(stmt)
         stuff = result.scalars().first()
@@ -27,7 +28,7 @@ class StuffRequest(BaseDAO[Stuff]):
             stmt = (
                 select(Inventory)
                 .join(Player, Inventory.player_id == Player.id_tg)
-                .where(Player.player_name == player_name)
+                .where(Player.player_name == name_player)
             )
             result = await session.execute(stmt)
             inventory = result.scalars().first()
@@ -35,16 +36,16 @@ class StuffRequest(BaseDAO[Stuff]):
                 session.add(
                     Stuff(
                         invetory_id=inventory.id,
-                        title=item_name,
+                        title=name_item,
                         price=price_item,
                         description=description,
                     )
                 )
+                await session.commit()
             else:
                 raise SQLAlchemyError("Такого игрока нет")
-            await session.commit()
 
-    @BaseDAO.connection
+    @BaseRequest.connection
     @staticmethod
     async def delete_stuff(session, name_player: str, name_item: str):
         async with session.begin():
@@ -60,11 +61,12 @@ class StuffRequest(BaseDAO[Stuff]):
                 if stuff is not None:
                     await session.delete(stuff)
                 else:
-                    raise NotFoundError(Stuff.__tablename__, name_item, name_player)
+                    logging.warning(f"Такого предмета нет: {name_item}")
+                    raise NotFoundError(name_item, name_player)
             except SQLAlchemyError as e:
                 logging.error(e)
 
-    @BaseDAO.connection
+    @BaseRequest.connection
     @staticmethod
     async def select_all_stuff(session, name_player: str):
         stmt = (
@@ -79,4 +81,3 @@ class StuffRequest(BaseDAO[Stuff]):
             return stuff
         else:
             raise Exception("Такого игрока нет")
-

@@ -2,13 +2,15 @@
 import logging
 from sqlalchemy import select
 from pager.databases.models import Player
-from pager.databases.requests.base import BaseDAO
+from pager.databases.requests.base import BaseRequest
 from sqlalchemy.exc import SQLAlchemyError
 
+from pager.exeption.exeption import NotFoundError
 
-class PlayerRequest(BaseDAO[Player]):
+
+class PlayerRequest(BaseRequest[Player]):
     
-    @BaseDAO.connection
+    @BaseRequest.connection
     @staticmethod
     async def select_player(session, data: str | int) -> Player:
         """
@@ -24,13 +26,17 @@ class PlayerRequest(BaseDAO[Player]):
             else:
                 stmt = select(Player).where(Player.player_name == data)
             result = await session.execute(stmt)
-            return result.scalars().first()
+            player = result.scalars().first()
+            if player is None:
+                logging.warning(f"Такого игрока нет: {data}")
+                raise NotFoundError(data)
+            return player
         except SQLAlchemyError as e:
             logging.error(e)
             raise e
 
 
-    @BaseDAO.connection #TODO: заменить на метод из BaseDAO
+    @BaseRequest.connection #TODO: заменить на метод из BaseDAO
     @staticmethod
     async def update_new_player(session, new_player: Player):
         try:
@@ -43,7 +49,7 @@ class PlayerRequest(BaseDAO[Player]):
             raise e
             
 
-    @BaseDAO.connection
+    @BaseRequest.connection
     @staticmethod
     async def create_photo_state(session, player_name: str, photo_url: str):
         async with session.begin():
@@ -58,7 +64,7 @@ class PlayerRequest(BaseDAO[Player]):
             player.photo_state = player.photo_state + [photo_url]
             await session.commit()
 
-    @BaseDAO.connection
+    @BaseRequest.connection
     @staticmethod
     async def select_photo_state(session, player_name: str):
         stmt = select(Player).where(Player.player_name == player_name)
@@ -69,7 +75,7 @@ class PlayerRequest(BaseDAO[Player]):
         else:
             return None
 
-    @BaseDAO.connection
+    @BaseRequest.connection
     @staticmethod
     async def delete_photo_state(session, player_name: str):
         async with session.begin():
@@ -83,7 +89,7 @@ class PlayerRequest(BaseDAO[Player]):
                 raise Exception("Такого игрока нет")
             
             
-    @BaseDAO.connection
+    @BaseRequest.connection
     @staticmethod
     async def select_all_admins(session):
         stmt = select(Player).where(Player.is_admin.is_(True)) 

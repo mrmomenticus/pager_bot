@@ -6,6 +6,7 @@ from pager import keyboards, states
 from pager.databases.requests.player import PlayerRequest
 from aiogram.types import FSInputFile
 
+from pager.exeption.exeption import NotFoundError
 from pager.filter import Role
 
 
@@ -69,19 +70,20 @@ class StateAdmin:
     @staticmethod
     @info_router.message(states.GetInfoState.name, F.text)
     async def cmd_get_info(message: types.Message, state: FSMContext):
-        player = await PlayerRequest.select_photo_state(message.text)
-
-        if player is None:
-            await message.answer("Такого игрока нет")
-            return
+        try:
+            player = await PlayerRequest.select_player(message.text)
+        except NotFoundError as e:
+            await message.answer(f"{e}")
+        except Exception:
+            message.answer("Возникла ошибка. Попробуйте позже")
 
         for photo in player.photo_state:
             try:
                 photo_file = FSInputFile(photo)
                 await message.answer_photo(photo_file)
             except Exception as e:
-                logging.error(f"Братан, пиши разрабу, у нас ошибка! Error: {e}")
-                await message.answer(f"Error: {e}")
+                logging.error(f"{e} + photo: {photo}")
+                await message.answer("Возникла ошибка. Попробуйте позже")
         await state.clear()
 
     @staticmethod
@@ -124,10 +126,13 @@ class StatePlayer:
         if player is None:
             await message.answer("Странно, но ваши данные не найдены")
         else:
-            for photo in player.photo_state:
-                try:
-                    photo_file = FSInputFile(photo)
-                    await message.answer_photo(photo_file)
-                except Exception as e:
-                    logging.error(f"Братан, пиши разрабу, у нас ошибка! Error: {e}")
-                    await message.answer(f"Error: {e}")
+            if player.photo_state is None:
+                await message.answer("Данных нет")
+            else:
+                for photo in player.photo_state:
+                    try:
+                        photo_file = FSInputFile(photo)
+                        await message.answer_photo(photo_file)
+                    except Exception as e:
+                        logging.error(f"{e}")
+                        await message.answer("Возникала ошибка. Попробуйте позже")

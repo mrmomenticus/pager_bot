@@ -1,12 +1,12 @@
 
-from tracemalloc import BaseFilter
+from aiogram.filters import Filter
 from aiogram.types import Message
 
 from pager.databases.requests.player import PlayerRequest
 from pager.utils.utility import get_id_from_players
 
 
-class Role(BaseFilter):
+class Role(Filter):
 
     def __init__(self, admins: list[int] = None, is_admin: bool = False) -> None:
         """
@@ -31,10 +31,8 @@ class Role(BaseFilter):
         :rtype: bool
         """
         if self._admins is None:
-            _admins = get_id_from_players(PlayerRequest().select_all_admins())
-            message.from_user.id in _admins
-        found_admin: bool = message.from_user.id in self._admins 
-        # Если находит id в списках админов, но притом это роль доолжна быть игроков, то делает 
+            self._admins = await get_id_from_players(await PlayerRequest.select_all_admins())
+        
+        found_admin: bool = message.from_user.id in self._admins
+        
         return found_admin if self._is_admin else not found_admin
-            
-    

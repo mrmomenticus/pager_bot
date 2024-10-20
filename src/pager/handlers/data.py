@@ -70,7 +70,7 @@ class DataPlayer:
     @staticmethod
     @data_route.message(F.text == "Когда игра?")
     async def cmd_when_game(message: types.Message):
-        date = await PlayerRequest.select_games_by_player_id(message.from_user.id)
+        date = await GameRequest.select_game_by_player_id(message.from_user.id)
         if date is None:
             await message.answer("Даты игры не найдены")
         else:

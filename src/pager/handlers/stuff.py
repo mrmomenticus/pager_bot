@@ -40,14 +40,16 @@ class StuffAdmin:
     async def add_item_complete(message: types.Message, state: FSMContext):
         await state.update_data(description=message.text)
         try:
-            await StuffRequest().add_new_stuff(
-                (await state.get_data()).get("name_player"),
-                (await state.get_data()).get("name_item"),
-                int((await state.get_data()).get("price_item")),
-                (await state.get_data()).get("description"),
+                await StuffRequest.add_new_stuff(
+                name_player=(await state.get_data()).get("name_player"),
+                name_item=(await state.get_data()).get("name_item"),
+                price_item=int((await state.get_data()).get("price_item")),
+                description=(await state.get_data()).get("description"),
             )
         except Exception as e:
-            await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
+            await message.answer("Возникла ошибка. Попробуйте позже")
+            await state.clear()
+            raise e 
         await message.answer(
             "Вещь успешно добавлена",
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
@@ -71,7 +73,7 @@ class StuffAdmin:
     @stuff_route.message(states.DeleteItemState.name_item, F.text)
     async def delete_item_complete(message: types.Message, state: FSMContext):
         try:
-            await StuffRequest().delete_stuff(
+            await StuffRequest.delete_stuff(
                 (await state.get_data()).get("name_player"), message.text
             )
             await message.answer(
@@ -89,7 +91,7 @@ class StuffPlayer:
     @stuff_route.message(F.text == "Мои вещи")
     async def cmd_stuff_players(message: types.Message):
         player = await PlayerRequest.select_player(message.from_user.id)
-        stuffs = await StuffRequest().select_all_stuff(player.player_name)
+        stuffs = await StuffRequest.select_all_stuff(player.player_name)
         if player is None:
             await message.answer("Странно, но ваши данные не найдены")
         else:
