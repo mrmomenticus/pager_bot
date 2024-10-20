@@ -4,8 +4,9 @@ from pager import keyboards, states
 from pager.databases import models
 from pager.databases.requests.game import GameRequest
 from pager.filter import Role
+from pager.handlers.base import BaseHandlerAdmin
 
-class GroupAdmin:
+class GroupAdmin(BaseHandlerAdmin):
     group_router = Router()
     group_router.message.filter(Role(is_admin = True))
 

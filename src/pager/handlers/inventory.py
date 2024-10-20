@@ -6,9 +6,10 @@ from pager.databases.requests.inventory import InventoryRequest
 from pager.databases.requests.player import PlayerRequest
 from pager.databases.requests.stuff import StuffRequest
 from pager.filter import Role
+from pager.handlers.base import BaseHandlerAdmin
 
 
-class InventoryAdmin:
+class InventoryAdmin(BaseHandlerAdmin):
     inventory_route = Router()
     inventory_route.message.filter(Role(is_admin=True))
 
@@ -44,6 +45,7 @@ class InventoryAdmin:
                 state.clear()
             else:
                 await message.answer(f"Игрок {name} имеет {money}!")
+                await BaseHandlerAdmin._notification_player(player_data=name, message_str="Обновление денег, теперь: ", new_data=money)
                 await state.clear()
         except Exception as e:
             logging.error(f"Ошибка: {e}, traceback: {e.__traceback__}, message: {message.text}")
@@ -97,6 +99,7 @@ class InventoryAdmin:
                 )
             await message.answer(f"А также сумму {money} денег")
 
+            
         except ValueError as e:
             await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
 

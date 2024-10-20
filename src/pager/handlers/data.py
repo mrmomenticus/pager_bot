@@ -2,27 +2,15 @@ from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases.requests.game import GameRequest
-from pager.databases.requests.player import PlayerRequest
 from pager.exeption.exeption import NotFoundError
-from pager.utils.bot import BotManager
+from pager.handlers.base import BaseHandlerAdmin
 import re
 from pager.filter import Role
 
-class DataAdmin:
+class DataAdmin(BaseHandlerAdmin):
     data_route = Router()
     data_route.message.filter(Role(is_admin=True))
-
-    @staticmethod
-    async def _notification_group(number_group: int, message_str: str, new_data):
-        bot_manager = BotManager()
-        players = await GameRequest.get_players_from_game(number_group)
-        for player in players:
-            await (
-                bot_manager.get_pager_bot()
-                .get_raw_bot()
-                .send_message(player.id_tg, f"{message_str}: {new_data}")
-            )
-
+    
     @staticmethod
     @data_route.message(F.text == "Добавить дату игры")
     async def cmd_number_group(message: types.Message, state: FSMContext):
@@ -53,7 +41,7 @@ class DataAdmin:
                 "Дата успешно добавлена",
                 reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
             )
-            await DataAdmin._notification_group(
+            await BaseHandlerAdmin._notification_group(
                 int(data["number_group"]), "Обновление даты игры", message.text
             )
             await state.clear()

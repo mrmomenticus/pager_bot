@@ -4,10 +4,13 @@ from pager import keyboards, states
 from pager.databases.requests.stuff import StuffRequest
 from pager.databases.requests.player import PlayerRequest
 from pager.filter import Role
+from pager.handlers.base import BaseHandlerAdmin
 
-class StuffAdmin:
+
+class StuffAdmin(BaseHandlerAdmin):
     stuff_route = Router()
     stuff_route.message.filter(Role(is_admin=True))
+
     @staticmethod
     @stuff_route.message(F.text == "Добавить вещь")
     async def add_item_name_player(message: types.Message, state: FSMContext):
@@ -40,7 +43,7 @@ class StuffAdmin:
     async def add_item_complete(message: types.Message, state: FSMContext):
         await state.update_data(description=message.text)
         try:
-                await StuffRequest.add_new_stuff(
+            await StuffRequest.add_new_stuff(
                 name_player=(await state.get_data()).get("name_player"),
                 name_item=(await state.get_data()).get("name_item"),
                 price_item=int((await state.get_data()).get("price_item")),
@@ -49,10 +52,15 @@ class StuffAdmin:
         except Exception as e:
             await message.answer("Возникла ошибка. Попробуйте позже")
             await state.clear()
-            raise e 
+            raise e
         await message.answer(
             "Вещь успешно добавлена",
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
+        )
+        await BaseHandlerAdmin._notification_player(
+            player_data=(await state.get_data()).get("name_player"),
+            message_str="Добавление вещи: ",
+            new_data=(await state.get_data()).get("name_item"),
         )
         await state.clear()
 
@@ -80,6 +88,12 @@ class StuffAdmin:
                 "Вещь успешно удалена",
                 reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
             )
+
+            await BaseHandlerAdmin._notification_player(
+                player_data=(await state.get_data()).get("name_player"),
+                message_str="Удаление вещи: ",
+                new_data=message.text,
+            )
         except ValueError as e:
             await message.answer(f"Братан пиши разрабу, у нас ошибка! Error: {e}")
 
@@ -87,6 +101,7 @@ class StuffAdmin:
 class StuffPlayer:
     stuff_route = Router()
     stuff_route.message.filter(Role)
+
     @staticmethod
     @stuff_route.message(F.text == "Мои вещи")
     async def cmd_stuff_players(message: types.Message):
