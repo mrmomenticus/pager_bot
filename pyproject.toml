@@ -13,4 +13,4 @@ APScheduler = "^4.0.0a5"
 
 
 [tool.poetry.dev-dependencies]
-black = "^23.3"
+black = "^24.10"
