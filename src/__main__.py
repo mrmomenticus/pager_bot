@@ -1,30 +1,52 @@
 import asyncio
 import logging
+from pager.utils.logger import LoggerConfigurator
 
-from pager import configs
-from aiogram import Bot, Dispatcher
-from pager.handlers import register, start, menu_admin, menu_players
-from pager.databases import core
+from pager.utils.bot import BotManager
+
+from pager.databases.requests.base import BaseRequest
+from pager.handlers import (
+    register,
+    start,
+    menu_admin,
+    menu_players,
+    data,
+    inventory,
+    group,
+    state,
+    stuff
+)
 
 
 async def main():
-    logging.basicConfig(level=logging.DEBUG)
+    LoggerConfigurator().configure()
+    logging.info("Start bot")
     # Объект бота
-    bot = Bot(token=configs.cfg["token"])  # type: ignore
-    # Диспетчер
-    dp = Dispatcher()
+    bot_manager = BotManager()
+    bot_manager.get_pager_bot().add_routes(
+        [
+            start.start_route,
+            register.register_route,
+            menu_admin.MainMenu.route_admin,
+            menu_players.MenuPlayers.route_players,
+            data.DataAdmin.data_route,
+            data.DataPlayer.data_route,
+            inventory.InventoryAdmin.inventory_route,
+            inventory.InventoryPlayer.inventory_route,
+            group.GroupAdmin.group_router,
+            state.StateAdmin.info_router,
+            state.StatePlayer.info_router,
+            stuff.StuffAdmin.stuff_route,
+            stuff.StuffPlayer.stuff_route
+        ]
+    )
     logging.debug("Start polling")
 
-    dp.include_router(start.start_route)
-    dp.include_router(register.register_route)
-    dp.include_router(menu_admin.main_menu_admin)
-    dp.include_router(menu_players.main_menu_players)
+    await BaseRequest.init_database()
 
-
-    await core.init_database()
-
-    await dp.start_polling(bot)
+    await bot_manager.start_bot()
 
 
 if __name__ == "__main__":
     asyncio.run(main())
+    

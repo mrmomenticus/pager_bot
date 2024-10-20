@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "pager"
+version = "0.1.0"
+description = ""
+authors = ["Vladimir <vova.bod53@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+aiogram = "^3.11"
+SQLAlchemy = "^2.0"
+PyYAML = "^6.0"
+APScheduler = "^4.0.0a5"
+
+
+[tool.poetry.dev-dependencies]
+black = "^23.3"

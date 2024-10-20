@@ -1,7 +1,7 @@
 from aiogram import Router, types
 from aiogram.filters.command import CommandStart
 from pager import keyboards
-from pager.databases.orm import PlayerOrm
+from pager.databases.requests.player import PlayerRequest
 
 
 start_route = Router()
@@ -9,7 +9,7 @@ start_route = Router()
 
 @start_route.message(CommandStart())
 async def cmd_start(message: types.Message):
-    players = await PlayerOrm.select_player_from_id(message.from_user.id)
+    players = await PlayerRequest.select_player(message.from_user.id)
     if players is not None:
         if players.is_admin:
             await message.answer(
@@ -23,6 +23,6 @@ async def cmd_start(message: types.Message):
             )
     else:
         await message.answer(
-            "Привет кусок мяса. Добро пожаловать в мрачный мир будущего! Тебе тут не рады, но любое мнение тут пыль. Чего ты хочешь?",
+            "Добро пожаловать, тебя нет в базе данных, нажми кнопку регистрации",
             reply_markup=keyboards.RegistredButton().get_keyboard(),
         )
