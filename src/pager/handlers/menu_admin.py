@@ -1,10 +1,10 @@
 from aiogram import F, Router, types
 from pager import keyboards
-from pager.filter import IsAdmin
+from pager.filter import Role
 
 class MainMenu:
     route_admin = Router()
-    route_admin.message.filter(IsAdmin)
+    route_admin.message.filter(Role)
     """Handle main menu buttons"""
 
     @staticmethod

@@ -8,8 +8,8 @@ from pager.databases import models
 import logging
 from aiogram import F, Router, types
 
-from pager.databases.requests.game import GameOrm
-from pager.databases.requests.player import PlayerOrm
+from pager.databases.requests.game import GameRequest
+from pager.databases.requests.player import PlayerRequest
 
 register_route = Router()
 new_player = models.Player()
@@ -33,7 +33,7 @@ async def cmd_register_number_group(message: types.Message, state: FSMContext):
 )  # TODO уйти от номеров в сторону название пачки
 async def cmd_register_nickname(message: types.Message, state: FSMContext):
     try:
-        game = await GameOrm.get_game_by_number_group(
+        game = await GameRequest.get_game_by_number_group(
             (int(message.text))
         )  # await orm.get_game_by_number_group(message.text)
     except Exception as e:
@@ -75,7 +75,7 @@ async def cmd_register_done(message: types.Message, state: FSMContext):
             reply_markup=keyboards.PlayerMenuButtons().get_keyboard(),
         )
         try:
-            await PlayerOrm.update_new_player(new_player)
+            await PlayerRequest.update_new_player(new_player)
         except Exception as e:
             await message.answer("Возникли проблемы. Обратись к @Mrmomenticus")
             logging.error(f"Error: {e}")

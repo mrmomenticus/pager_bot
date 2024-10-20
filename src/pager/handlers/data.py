@@ -1,20 +1,21 @@
 from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
-from pager.databases.requests.game import GameOrm
-from pager.databases.requests.player import PlayerOrm
+from pager.databases.requests.game import GameRequest
+from pager.databases.requests.player import PlayerRequest
+from pager.exeption.exeption import NotFoundError
 from pager.utils.bot import BotManager
 import re
-from pager.filter import IsAdmin
+from pager.filter import Role
 
 class DataAdmin:
     data_route = Router()
-    data_route.message.filter(IsAdmin)
+    data_route.message.filter(Role(is_admin=True))
 
     @staticmethod
     async def _notification_group(number_group: int, message_str: str, new_data):
         bot_manager = BotManager()
-        players = await GameOrm.get_players_from_game(number_group)
+        players = await GameRequest.get_players_from_game(number_group)
         for player in players:
             await (
                 bot_manager.get_pager_bot()
@@ -46,25 +47,30 @@ class DataAdmin:
             return
 
         data = await state.get_data()
-
-        await GameOrm.set_date_game(int(data["number_group"]), message.text)
-        await message.answer(
-            "Дата успешно добавлена",
-            reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
-        )
-        await DataAdmin._notification_group(
-            int(data["number_group"]), "Обновление даты игры", message.text
-        )
-        await state.clear()
+        try:
+            await GameRequest.set_date_game(int(data["number_group"]), message.text)
+            await message.answer(
+                "Дата успешно добавлена",
+                reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
+            )
+            await DataAdmin._notification_group(
+                int(data["number_group"]), "Обновление даты игры", message.text
+            )
+            await state.clear()
+        except NotFoundError as e:
+            await message.answer(f"{e}")
+        except Exception:
+            message.answer("Ошибка запроса. Попробуйте позже или обратитесь к разработчику.")
 
 
 class DataPlayer:
     data_route = Router()
+    data_route.message.filter(Role)
     
     @staticmethod
     @data_route.message(F.text == "Когда игра?")
     async def cmd_when_game(message: types.Message):
-        date = await PlayerOrm.select_games_by_player_id(message.from_user.id)
+        date = await PlayerRequest.select_games_by_player_id(message.from_user.id)
         if date is None:
             await message.answer("Даты игры не найдены")
         else:

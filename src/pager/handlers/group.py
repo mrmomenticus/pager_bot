@@ -2,12 +2,12 @@ from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases import models
-from pager.databases.requests.game import GameOrm
-from pager.filter import IsAdmin
+from pager.databases.requests.game import GameRequest
+from pager.filter import Role
 
 class GroupAdmin:
     group_router = Router()
-    group_router.message.filter(IsAdmin)
+    group_router.message.filter(Role(is_admin = True))
 
     @staticmethod
     @group_router.message(F.text == "Добавить группу")
@@ -31,7 +31,7 @@ class GroupAdmin:
             number_group=int(nubmer_game["nubmer_game"]), game_name=message.text
         )
 
-        await GameOrm.set_new_game(game)
+        await GameRequest.set_new_game(game)
         await message.answer(
             "Группа успешно добавлена",
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),

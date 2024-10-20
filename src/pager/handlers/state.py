@@ -3,15 +3,15 @@ import os
 from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
-from pager.databases.requests.player import PlayerOrm
+from pager.databases.requests.player import PlayerRequest
 from aiogram.types import FSInputFile
 
-from pager.filter import IsAdmin
+from pager.filter import Role
 
 
 class StateAdmin:
     info_router = Router()
-    info_router.message.filter(IsAdmin)
+    info_router.message.filter(Role(is_admin=True))
 
     @staticmethod
     @info_router.message(F.text == "Информация по игрокам...")
@@ -49,7 +49,7 @@ class StateAdmin:
             f"images/{name}/{name}_{message.photo[-1].file_id}.jpg",
         )
 
-        await PlayerOrm.create_photo_state(
+        await PlayerRequest.create_photo_state(
             name, f"images/{name}/{name}_{message.photo[-1].file_id}.jpg"
         )
 
@@ -69,20 +69,19 @@ class StateAdmin:
     @staticmethod
     @info_router.message(states.GetInfoState.name, F.text)
     async def cmd_get_info(message: types.Message, state: FSMContext):
-        player = await PlayerOrm.select_photo_state(message.text)
+        player = await PlayerRequest.select_photo_state(message.text)
 
         if player is None:
             await message.answer("Такого игрока нет")
             return
 
-        for player in player:
-            for photo in player.photo_state:
-                try:
-                    photo_file = FSInputFile(photo)
-                    await message.answer_photo(photo_file)
-                except Exception as e:
-                    logging.error(f"Братан, пиши разрабу, у нас ошибка! Error: {e}")
-                    await message.answer(f"Error: {e}")
+        for photo in player.photo_state:
+            try:
+                photo_file = FSInputFile(photo)
+                await message.answer_photo(photo_file)
+            except Exception as e:
+                logging.error(f"Братан, пиши разрабу, у нас ошибка! Error: {e}")
+                await message.answer(f"Error: {e}")
         await state.clear()
 
     @staticmethod
@@ -95,7 +94,7 @@ class StateAdmin:
     @staticmethod
     @info_router.message(states.DeleteInfoState.name, F.text)
     async def cmd_delete_info(message: types.Message, state: FSMContext):
-        await PlayerOrm.delete_photo_state(message.text)
+        await PlayerRequest.delete_photo_state(message.text)
 
         try:
             import shutil
@@ -116,11 +115,12 @@ class StateAdmin:
 
 class StatePlayer:
     info_router = Router()
+    info_router.message.filter(Role)
 
     @staticmethod
     @info_router.message(F.text == "Мои статы")
     async def cmd_info_players(message: types.Message):
-        player = await PlayerOrm.select_player_from_id(message.from_user.id)
+        player = await PlayerRequest.select_player(message.from_user.id)
         if player is None:
             await message.answer("Странно, но ваши данные не найдены")
         else:

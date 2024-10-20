@@ -1,11 +1,13 @@
 import logging
 from sqlalchemy import select
-from pager.databases.models import Inventory, Player, Stuff, connection
+from pager.databases.models import Inventory, Player, Stuff
 from exeption.exeption import NotFoundError
 from sqlalchemy.exc import SQLAlchemyError
 
-class StuffOrm:
-    @connection
+from pager.databases.requests.base import BaseDAO
+
+class StuffRequest(BaseDAO[Stuff]):
+    @BaseDAO.connection
     @staticmethod
     async def add_new_stuff(
         session, player_name: str, item_name: str, price_item: int, description: str
@@ -42,7 +44,7 @@ class StuffOrm:
                 raise SQLAlchemyError("Такого игрока нет")
             await session.commit()
 
-    @connection
+    @BaseDAO.connection
     @staticmethod
     async def delete_stuff(session, name_player: str, name_item: str):
         async with session.begin():
@@ -62,7 +64,7 @@ class StuffOrm:
             except SQLAlchemyError as e:
                 logging.error(e)
 
-    @connection
+    @BaseDAO.connection
     @staticmethod
     async def select_all_stuff(session, name_player: str):
         stmt = (

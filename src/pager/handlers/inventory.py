@@ -2,14 +2,14 @@ import logging
 from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
-from pager.databases.requests.inventory import InventoryOrm
-from pager.databases.requests.player import PlayerOrm
-from pager.filter import IsAdmin
+from pager.databases.requests.inventory import InventoryRequest
+from pager.databases.requests.player import PlayerRequest
+from pager.filter import Role
 
 
 class InventoryAdmin:
     inventory_route = Router()
-    inventory_route.message.filter(IsAdmin)
+    inventory_route.message.filter(Role(is_admin=True))
 
     @staticmethod
     @inventory_route.message(F.text == "Инвентарь игрока...")
@@ -37,7 +37,7 @@ class InventoryAdmin:
     async def add_money_complete(message: types.Message, state: FSMContext):
         name = (await state.get_data()).get("name")
         try:
-            money = await InventoryOrm().update_money(name, int(message.text))
+            money = await InventoryRequest.update_money(name, int(message.text))
             if money is None:
                 await message.answer(f"Игрок {name} не найден!")
             else:
@@ -65,7 +65,7 @@ class InventoryAdmin:
     async def take_money_complete(message: types.Message, state: FSMContext):
         name = (await state.get_data()).get("name")
         try:
-            money = await InventoryOrm().take_money(name, int(message.text))
+            money = await InventoryRequest.take_money(name, int(message.text))
             if money is None:
                 await message.answer(f"Игрок {name} не найден!")
             else:
@@ -84,9 +84,9 @@ class InventoryAdmin:
     @inventory_route.message(states.AllInventoryPlayer.name_player, F.text)
     async def all_inventory_complete(message: types.Message, state: FSMContext):
         try:
-            stuffs = await PlayerOrm.select_all_stuff(message.text)
+            stuffs = await PlayerRequest.select_all_stuff(message.text)
 
-            money = await InventoryOrm.select_money(message.text)
+            money = await InventoryRequest.select_money(message.text)
 
             await message.answer(f"Игрок {message.text} имеет: ")
             for stuff in stuffs:
@@ -100,13 +100,14 @@ class InventoryAdmin:
 
 
 class InventoryPlayer:
-    inventory_player = Router()
+    inventory_route = Router()
+    inventory_route.message.filter(Role)
 
     @staticmethod
-    @inventory_player.message(F.text == "Мои деньги")
+    @inventory_route.message(F.text == "Мои деньги")
     async def cmd_money_players(message: types.Message):
-        player = await PlayerOrm.select_player_from_id(message.from_user.id)
-        money = await InventoryOrm().select_money(player.player_name)
+        player = await PlayerRequest.select_player(message.from_user.id)
+        money = await InventoryRequest.select_money(player.player_name)
         if player is None:
             await message.answer("Странно, но ваши данные не найдены")
         else:

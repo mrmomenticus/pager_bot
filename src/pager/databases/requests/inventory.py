@@ -1,8 +1,9 @@
 from sqlalchemy import select
-from pager.databases.models import Inventory, Player, connection
+from pager.databases.models import Inventory, Player
+from pager.databases.requests.base import BaseDAO
 
-class InventoryOrm:
-    @connection
+class InventoryRequest(BaseDAO[Inventory]):
+    @BaseDAO.connection
     @staticmethod
     async def update_money(session, player_name: str, money: int):
         async with session.begin():
@@ -20,7 +21,7 @@ class InventoryOrm:
             else:
                 raise Exception("Такого игрока нет")
 
-    @connection
+    @BaseDAO.connection
     @staticmethod
     async def select_money(session, player_name: str):
         stmt = (

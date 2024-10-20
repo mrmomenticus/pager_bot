@@ -1,56 +1,49 @@
 
 import logging
 from sqlalchemy import select
-from pager.databases.models import Player, connection
+from pager.databases.models import Player
+from pager.databases.requests.base import BaseDAO
+from sqlalchemy.exc import SQLAlchemyError
 
 
-
-class PlayerOrm:
-    def __init__():
-        logging.info("Тест инициализации")
-        
-    """
-    Ищет игрока по его Telegram id.
-
-    Args:
-        id_tg: Telegram id
-
-    Returns:
-        Player: Возвращает оьъект игрока или None.
-    """
-
-    @connection
+class PlayerRequest(BaseDAO[Player]):
+    
+    @BaseDAO.connection
     @staticmethod
-    async def select_player_from_id(session, id_tg: int) -> Player:
-        stmt = select(Player).where(Player.id_tg == id_tg)
-        result = await session.execute(stmt)
-        return result.scalars().first()
+    async def select_player(session, data: str | int) -> Player:
+        """
+        Ищет игрока по его ID Telegram или имени.
 
-    """
-        Ищет игрока по его имени.
+        :param session: сессия sqlalchemy
+        :param data: ID Telegram или имя игрока
+        :return: объект Player, или None если игрока не существует
+        """
+        try:
+            if isinstance(data, int):
+                stmt = select(Player).where(Player.id_tg == data)
+            else:
+                stmt = select(Player).where(Player.player_name == data)
+            result = await session.execute(stmt)
+            return result.scalars().first()
+        except SQLAlchemyError as e:
+            logging.error(e)
+            raise e
 
-        Args:
-            player_name: Имя игрока
 
-        Returns:
-            Player: Возвращает оьъект игрока или None.
-    """
-
-    @connection
-    @staticmethod
-    async def select_player_from_name(session, player_name: str) -> Player:
-        stmt = select(Player).where(Player.player_name == player_name)
-        result = await session.execute(stmt)
-        return result.scalars().first()
-
-    @connection
+    @BaseDAO.connection #TODO: заменить на метод из BaseDAO
     @staticmethod
     async def update_new_player(session, new_player: Player):
-        async with session.begin():
-            session.add(new_player)
-            await session.commit()
+        try:
+            async with session.begin():
+                session.add(new_player)
+                await session.commit()
+        except SQLAlchemyError as e:
+            logging.error(e)
+            session.rollback()
+            raise e
+            
 
-    @connection
+    @BaseDAO.connection
     @staticmethod
     async def create_photo_state(session, player_name: str, photo_url: str):
         async with session.begin():
@@ -65,7 +58,7 @@ class PlayerOrm:
             player.photo_state = player.photo_state + [photo_url]
             await session.commit()
 
-    @connection
+    @BaseDAO.connection
     @staticmethod
     async def select_photo_state(session, player_name: str):
         stmt = select(Player).where(Player.player_name == player_name)
@@ -76,7 +69,7 @@ class PlayerOrm:
         else:
             return None
 
-    @connection
+    @BaseDAO.connection
     @staticmethod
     async def delete_photo_state(session, player_name: str):
         async with session.begin():
@@ -90,7 +83,7 @@ class PlayerOrm:
                 raise Exception("Такого игрока нет")
             
             
-    @connection
+    @BaseDAO.connection
     @staticmethod
     async def select_all_admins(session):
         stmt = select(Player).where(Player.is_admin.is_(True)) 

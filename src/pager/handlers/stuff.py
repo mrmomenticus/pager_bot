@@ -1,13 +1,13 @@
 from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
-from pager.databases.requests.stuff import StuffOrm
-from pager.databases.requests.player import PlayerOrm
-from pager.filter import IsAdmin
+from pager.databases.requests.stuff import StuffRequest
+from pager.databases.requests.player import PlayerRequest
+from pager.filter import Role
 
 class StuffAdmin:
     stuff_route = Router()
-    stuff_route.message.filter(IsAdmin)
+    stuff_route.message.filter(Role(is_admin=True))
     @staticmethod
     @stuff_route.message(F.text == "Добавить вещь")
     async def add_item_name_player(message: types.Message, state: FSMContext):
@@ -40,7 +40,7 @@ class StuffAdmin:
     async def add_item_complete(message: types.Message, state: FSMContext):
         await state.update_data(description=message.text)
         try:
-            await StuffOrm().add_new_stuff(
+            await StuffRequest().add_new_stuff(
                 (await state.get_data()).get("name_player"),
                 (await state.get_data()).get("name_item"),
                 int((await state.get_data()).get("price_item")),
@@ -71,7 +71,7 @@ class StuffAdmin:
     @stuff_route.message(states.DeleteItemState.name_item, F.text)
     async def delete_item_complete(message: types.Message, state: FSMContext):
         try:
-            await StuffOrm().delete_stuff(
+            await StuffRequest().delete_stuff(
                 (await state.get_data()).get("name_player"), message.text
             )
             await message.answer(
@@ -84,11 +84,12 @@ class StuffAdmin:
 
 class StuffPlayer:
     stuff_route = Router()
+    stuff_route.message.filter(Role)
     @staticmethod
     @stuff_route.message(F.text == "Мои вещи")
     async def cmd_stuff_players(message: types.Message):
-        player = await PlayerOrm.select_player_from_id(message.from_user.id)
-        stuffs = await StuffOrm().select_all_stuff(player.player_name)
+        player = await PlayerRequest.select_player(message.from_user.id)
+        stuffs = await StuffRequest().select_all_stuff(player.player_name)
         if player is None:
             await message.answer("Странно, но ваши данные не найдены")
         else:
