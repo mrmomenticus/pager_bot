@@ -10,75 +10,62 @@ from aiogram import F, Router, types
 
 from pager.databases.requests.game import GameRequest
 from pager.databases.requests.player import PlayerRequest
-
-register_route = Router()
-new_player = models.Player()
+from pager.exeption.exeption import NotFoundError, handler_error
 
 
-@register_route.message(F.text == "Зарегистрироваться")
-async def cmd_register_number_group(message: types.Message, state: FSMContext):
-    new_player.id_tg = message.from_user.id
-    new_player.username = message.from_user.username
-    await message.answer("Назови номер группы")
+class Register:
+    """Регистрация пользователей с использованием конечных автоматов."""
 
-    await state.set_state(states.RegisterState.number_group)
+    register_route = Router()
 
-    logging.debug(
-        "Set state: states.RegisterState.number_group, data: %s", message.text
-    )
+    @staticmethod
+    @register_route.message(F.text == "Зарегистрироваться")
+    async def cmd_register_number_group(message: types.Message, state: FSMContext):
+        """Запрашивает номер группы."""
+        await message.answer("Назови номер группы")
+        await state.update_data({"id_tg": message.from_user.id})
+        await state.update_data({"username": message.from_user.username})
+        await state.set_state(states.RegisterState.number_group)
 
+    @staticmethod
+    @register_route.message(states.RegisterState.number_group, F.text)
+    async def cmd_register_nickname(message: types.Message, state: FSMContext):
+        """Запрашивает ник в игре."""
+        try:
+            game = await GameRequest.get_game_by_number_group(
+                (int(message.text))
+            )  # await orm.get_game_by_number_group(message.text)
+            state.update_data({"date": game.date})
+        except NotFoundError:
+            logging.warning("Не найдена группа! Попробуйте еще раз ввести!")
+            return 
+        except Exception as e:
+            await handler_error(e, message, state, message.text)
+            return
+        
+        await state.update_data({"game_id": int(message.text)})
+        await message.answer("Какой ваш ник в игре?")
+        await state.set_state(states.RegisterState.nickname)
 
-@register_route.message(
-    states.RegisterState.number_group, F.text
-)  # TODO уйти от номеров в сторону название пачки
-async def cmd_register_nickname(message: types.Message, state: FSMContext):
-    try:
-        game = await GameRequest.get_game_by_number_group(
-            (int(message.text))
-        )  # await orm.get_game_by_number_group(message.text)
-    except Exception as e:
-        logging.error(f"Error: {e}, id {message.from_user.id}")
-        await message.answer("Возникли проблемы. Обратись к @Mrmomenticus")
-
-    if game is None:
-        await message.answer("Такой группы нет")
-        await state.clear()
-        new_player.clear()
-        return
-
-    new_player.game_id = int(message.text)
-    await message.answer("Какой ваш ник в игре?")
-
-    await state.update_data({"number_group": message.text})
-    await state.set_state(states.RegisterState.nickname)
-
-    logging.debug("Set state: states.RegisterState.nickname, data: %s", message.text)
-
-
-@register_route.message(states.RegisterState.nickname)
-async def cmd_register_done(message: types.Message, state: FSMContext):
-    new_player.player_name = message.text
-    await state.update_data({"nickname": message.text})
-
-    data = await state.get_data()
-
-    logging.debug("Set state: states.RegisterState.done. data: %s", data)
-    if new_player.player_name is None or new_player.game_id is None:
-        new_player.clear()
-        await message.answer(f"{message.from_user.full_name}! Не хватает данных!")
-        await state.clear()
-
-        cmd_register_number_group(message, state)
-    else:
-        await message.answer(
-            f"Добро пожаловать " f"{data['nickname']}!",
-            reply_markup=keyboards.PlayerMenuButtons().get_keyboard(),
-        )
+    @staticmethod
+    @register_route.message(states.RegisterState.nickname)
+    async def cmd_register_done(message: types.Message, state: FSMContext):
+        """Вносит данные в БД."""
+        await state.update_data({"player_name": message.text})
+        data = await state.get_data()
+        if not data.get("player_name") or not data.get("game_id"):
+            await message.answer(f"{message.from_user.full_name}! Не хватает данных, начни заново!")
+            await state.clear()
+            return
+        new_player = models.Player(**data)
         try:
             await PlayerRequest.update_new_player(new_player)
         except Exception as e:
-            await message.answer("Возникли проблемы. Обратись к @Mrmomenticus")
-            logging.error(f"Error: {e}")
+            await handler_error(e, message, state, message.text, data.get("player_name"))
+            return
 
-    new_player.clear()
-    await state.clear()
+        await message.answer(
+            f"Добро пожаловать {data['player_name']}, ближайшее время игры: {data['date']}",
+            reply_markup=keyboards.PlayerMenuButtons().get_keyboard(),
+        )
+        await state.clear()

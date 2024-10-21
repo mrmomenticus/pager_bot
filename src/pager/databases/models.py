@@ -42,6 +42,7 @@ class Game(BaseModel):
     number_group: Mapped[int] = MappedColumn(primary_key=True)
     game_name: Mapped[str] = MappedColumn(String(255))
     date = MappedColumn(Date())
+    time = MappedColumn(String(255))
 
     players: Mapped[list["Player"]] = relationship("Player", back_populates="game")
 

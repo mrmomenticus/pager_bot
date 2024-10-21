@@ -1,3 +1,11 @@
+import logging
+from aiogram import types
+from aiogram.fsm.context import FSMContext
+async def handler_error(error: Exception, message: types.Message, state: FSMContext = None, *args):
+    await message.answer("Возникла ошибка. Попробуйте позже")
+    logging.critical(error, args)
+    await state.clear()
+
 class NotFoundError(Exception):
     """
     Ошибка поиска данных. Например: группа была не найдена в БД

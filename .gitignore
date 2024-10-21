@@ -164,6 +164,7 @@ cython_debug/
 
 #Конфиг файл
 config_test.yaml
+config.yaml
 
 
 #ide 
