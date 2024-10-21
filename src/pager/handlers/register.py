@@ -32,12 +32,12 @@ class Register:
     async def cmd_register_nickname(message: types.Message, state: FSMContext):
         """Запрашивает ник в игре."""
         try:
-            game = await GameRequest.get_game_by_number_group(
+            await GameRequest.get_game_by_number_group(
                 (int(message.text))
-            )  # await orm.get_game_by_number_group(message.text)
-            state.update_data({"date": game.date})
-        except NotFoundError:
-            logging.warning("Не найдена группа! Попробуйте еще раз ввести!")
+            )  
+        except NotFoundError as e:
+            logging.warning(e)
+            await message.answer(f"{e}! Введи еще раз!")
             return 
         except Exception as e:
             await handler_error(e, message, state, message.text)
@@ -65,7 +65,7 @@ class Register:
             return
 
         await message.answer(
-            f"Добро пожаловать {data['player_name']}, ближайшее время игры: {data['date']}",
+            f"Добро пожаловать {data['player_name']}!",
             reply_markup=keyboards.PlayerMenuButtons().get_keyboard(),
         )
         await state.clear()

@@ -14,13 +14,14 @@ class NotFoundError(Exception):
         *args: список подаваемых данных при запроса
     """
 
-    def __init__(self, *args: str):
+    def __init__(self, *args):
         self.args = args
-        super().__init__()
+        super().__init__(*args)
 
     def __str__(self) -> str:
-        return f"Таких данных не найдено: {', '.join(self.args)}"
+        return f"Таких данных не найдено: {', '.join(map(str, self.args))}"
 
+    
 class AlreadyAvailableError(Exception):
     def __str__(self):
         return "Такое уже есть!"
