@@ -26,7 +26,7 @@ async def main():
     bot_manager.get_pager_bot().add_routes(
         [
             start.start_route,
-            register.register_route,
+            register.Register.register_route,
             menu_admin.MainMenu.route_admin,
             menu_players.MenuPlayers.route_players,
             data.DataAdmin.data_route,

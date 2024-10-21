@@ -1,13 +1,20 @@
 import yaml
 
 
-def load_config():
+import argparse
+
+
+def load_config(path):
     try:
-        with open("config/config_test.yaml", "r") as file: #TODO Поменять на config.yaml
+        with open(path, "r") as file:
             config = yaml.safe_load(file)
         return config
     except Exception as e:
         print(f"Error loading config: {e}")
 
 
-cfg = load_config()
+parser = argparse.ArgumentParser()
+parser.add_argument("-c", "--config", help="path to config file")
+args = parser.parse_args()
+cfg = load_config(args.config)
+

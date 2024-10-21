@@ -1,4 +1,3 @@
-
 from pager.databases.requests.game import GameRequest
 from pager.databases.requests.player import PlayerRequest
 from pager.utils.bot import BotManager

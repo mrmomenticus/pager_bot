@@ -36,7 +36,7 @@ class PlayerRequest(BaseRequest[Player]):
             raise e
 
 
-    @BaseRequest.connection #TODO: заменить на метод из BaseDAO
+    @BaseRequest.connection #TODO: заменить на метод из Base
     @staticmethod
     async def update_new_player(session, new_player: Player):
         try:
@@ -86,7 +86,7 @@ class PlayerRequest(BaseRequest[Player]):
                 player.photo_state = []
                 await session.commit()
             else:
-                raise Exception("Такого игрока нет")
+                raise NotFoundError(player_name)
             
             
     @BaseRequest.connection
