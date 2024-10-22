@@ -52,6 +52,8 @@ class GameRequest(BaseRequest[Game]):
     async def get_players_from_game(session, number_group: int):
         stmt = select(Player).join(Game).where(Game.number_group == number_group)
         result = await session.execute(stmt)
+        if result is None:
+            raise NotFoundError(number_group)
         return result.scalars().all()
     
     @BaseRequest.connection

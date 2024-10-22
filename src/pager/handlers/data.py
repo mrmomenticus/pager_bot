@@ -3,11 +3,12 @@ from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases.requests.game import GameRequest
 from pager.exeption.exeption import NotFoundError
-from pager.handlers.base import BaseHandlerAdmin
+from pager.handlers.base import BaseHandler
 import re
 from pager.filter import Role
+from pager.utils.notification import Notification
 
-class DataAdmin(BaseHandlerAdmin):
+class DataAdmin(BaseHandler):
     data_route = Router()
     data_route.message.filter(Role(is_admin=True))
     
@@ -41,7 +42,7 @@ class DataAdmin(BaseHandlerAdmin):
                 "Дата успешно добавлена",
                 reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
             )
-            await BaseHandlerAdmin._notification_group(
+            await Notification.notification_group(
                 int(data["number_group"]), "Обновление даты игры", message.text
             )
             await state.clear()

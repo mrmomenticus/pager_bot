@@ -165,6 +165,7 @@ class AdminOrganization:
         self._buttons = (
             KeyboardButton(text="Добавить дату игры"),
             KeyboardButton(text="Добавить группу"),
+            KeyboardButton(text="Список игроков группы"),
             # KeyboardButton(text="Написать игроку"),
             KeyboardButton(text="Назад"),
         )

@@ -8,10 +8,11 @@ from aiogram.types import FSInputFile
 
 from pager.exeption.exeption import NotFoundError
 from pager.filter import Role
-from pager.handlers.base import BaseHandlerAdmin
+from pager.handlers.base import BaseHandler
+from pager.utils.notification import Notification
 
 
-class StateAdmin(BaseHandlerAdmin):
+class StateAdmin(BaseHandler):
     info_router = Router()
     info_router.message.filter(Role(is_admin=True))
 
@@ -60,7 +61,7 @@ class StateAdmin(BaseHandlerAdmin):
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
         )
         
-        await BaseHandlerAdmin._notification_player(player_data=name, message_str="Добавление информации о статах.")
+        await Notification.notification_player(player_data=name, message_str="Добавление информации о статах.")
         await state.clear()
 
     @staticmethod

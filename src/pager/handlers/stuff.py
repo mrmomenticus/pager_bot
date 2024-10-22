@@ -4,10 +4,11 @@ from pager import keyboards, states
 from pager.databases.requests.stuff import StuffRequest
 from pager.databases.requests.player import PlayerRequest
 from pager.filter import Role
-from pager.handlers.base import BaseHandlerAdmin
+from pager.handlers.base import BaseHandler
+from pager.utils.notification import Notification
 
 
-class StuffAdmin(BaseHandlerAdmin):
+class StuffAdmin(BaseHandler):
     stuff_route = Router()
     stuff_route.message.filter(Role(is_admin=True))
 
@@ -57,7 +58,7 @@ class StuffAdmin(BaseHandlerAdmin):
             "Вещь успешно добавлена",
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
         )
-        await BaseHandlerAdmin._notification_player(
+        await Notification.notification_player(
             player_data=(await state.get_data()).get("name_player"),
             message_str="Добавление вещи: ",
             new_data=(await state.get_data()).get("name_item"),
@@ -89,7 +90,7 @@ class StuffAdmin(BaseHandlerAdmin):
                 reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
             )
 
-            await BaseHandlerAdmin._notification_player(
+            await Notification.notification_player(
                 player_data=(await state.get_data()).get("name_player"),
                 message_str="Удаление вещи: ",
                 new_data=message.text,

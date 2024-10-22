@@ -3,10 +3,11 @@ from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases import models
 from pager.databases.requests.game import GameRequest
+from pager.exeption.exeption import NotFoundError, handler_error
 from pager.filter import Role
-from pager.handlers.base import BaseHandlerAdmin
+from pager.handlers.base import BaseHandler
 
-class GroupAdmin(BaseHandlerAdmin):
+class GroupAdmin(BaseHandler):
     group_router = Router()
     group_router.message.filter(Role(is_admin = True))
 
@@ -38,3 +39,23 @@ class GroupAdmin(BaseHandlerAdmin):
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
         )
         await state.clear()
+
+
+    @staticmethod
+    @group_router.message(F.text == "Список игроков группы")
+    async def cmd_players_in_group(message: types.Message, state: FSMContext):
+        await message.answer("Введи номер группы")
+        await state.set_state(states.OutputPlayersGroupState.number_group)
+    
+       
+    @staticmethod
+    @group_router.message(states.OutputPlayersGroupState.number_group, F.text)
+    async def cmd_output_players_in_group(message: types.Message):
+        try:
+            players = await GameRequest.get_players_from_game(number_group=int(message.text))
+            for player in players:
+                await message.answer(f"Игрок: {player.player_name}")
+        except NotFoundError as e:
+            await message.answer(f"{e}")
+        except Exception as e:
+            handler_error(e, message, states, message.text)

@@ -11,13 +11,15 @@ from aiogram import F, Router, types
 from pager.databases.requests.game import GameRequest
 from pager.databases.requests.player import PlayerRequest
 from pager.exeption.exeption import NotFoundError, handler_error
+from pager.handlers.base import BaseHandler
+from pager.utils.notification import Notification
 
 
-class Register:
+class Register(BaseHandler):
     """Регистрация пользователей с использованием конечных автоматов."""
 
     register_route = Router()
-
+    
     @staticmethod
     @register_route.message(F.text == "Зарегистрироваться")
     async def cmd_register_number_group(message: types.Message, state: FSMContext):
@@ -68,4 +70,7 @@ class Register:
             f"Добро пожаловать {data['player_name']}!",
             reply_markup=keyboards.PlayerMenuButtons().get_keyboard(),
         )
+        
+        Notification.notification_admin_game(data["game_id"], f"Новый игрок: {data['player_name']}")
+        
         await state.clear()

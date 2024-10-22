@@ -13,6 +13,9 @@ class AddGroupState(StatesGroup):
     number_group = State()
     group_name = State()
     
+class OutputPlayersGroupState(StatesGroup):
+    number_group = State()
+
 # Блок добавления информации по игрокам
 class AddInfoState(StatesGroup):
     name = State()

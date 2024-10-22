@@ -49,8 +49,21 @@ class LoggerConfigurator:
         stream_handler.setLevel(self._get_level_from_string(cfg["logger"]["level"]))
         stream_handler.setFormatter(self._setup_formatter_full())
 
+        if self._rotate:
+            error_handler = RotatingFileHandler(
+                f"{self._path}/error_log.log",
+                maxBytes=self._max_bytes,
+                backupCount=self._backup_count,
+            )
+        else:
+            error_handler = logging.FileHandler(f"{self._path}/error_log.log", mode="w")
+
+        error_handler.setLevel(logging.ERROR)
+        error_handler.setFormatter(self._setup_formatter_full())
+
         handlers.append(log_handler)
         handlers.append(stream_handler)
+        handlers.append(error_handler)
 
         return handlers
 
