@@ -1,7 +1,7 @@
 
 import logging
 from sqlalchemy import select
-from pager.databases.models import Player
+from pager.databases.models import Inventory, Player
 from pager.databases.requests.base import BaseRequest
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -36,12 +36,13 @@ class PlayerRequest(BaseRequest[Player]):
             raise e
 
 
-    @BaseRequest.connection #TODO: заменить на метод из Base
+    @BaseRequest.connection 
     @staticmethod
     async def update_new_player(session, new_player: Player):
         try:
             async with session.begin():
                 session.add(new_player)
+                session.add(Inventory(player_id=new_player.id_tg))
                 await session.commit()
         except SQLAlchemyError as e:
             logging.error(e)

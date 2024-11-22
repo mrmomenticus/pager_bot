@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from pager.databases.models import Inventory, Player
 from pager.databases.requests.base import BaseRequest
+from pager.utils.exeption import NotFoundError
 
 
 class InventoryRequest(BaseRequest[Inventory]):
@@ -37,7 +38,7 @@ class InventoryRequest(BaseRequest[Inventory]):
         if inventory is not None:
             return inventory.money
         else:
-            raise Exception("Такого игрока нет")
+            raise NotFoundError(player_name)
 
     @BaseRequest.connection
     @staticmethod

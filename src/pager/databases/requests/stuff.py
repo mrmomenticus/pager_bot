@@ -43,7 +43,8 @@ class StuffRequest(BaseRequest[Stuff]):
                 )
                 await session.commit()
             else:
-                raise SQLAlchemyError("Такого игрока нет")
+                session.rollback()
+                raise NotFoundError("Такого игрока нет")
 
     @BaseRequest.connection
     @staticmethod
