@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases import models
 from pager.databases.requests.game import GameRequest
-from pager.exeption.exeption import NotFoundError, handler_error
+from pager.utils.exeption import NotFoundError, handler_error
 from pager.filter import Role
 from pager.handlers.base import BaseHandler
 

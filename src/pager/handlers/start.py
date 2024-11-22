@@ -3,7 +3,7 @@ from aiogram import Router, types
 from aiogram.filters.command import CommandStart
 from pager import keyboards
 from pager.databases.requests.player import PlayerRequest
-from pager.exeption.exeption import NotFoundError
+from pager.utils.exeption import NotFoundError
 
 
 start_route = Router()

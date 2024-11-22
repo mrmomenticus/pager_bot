@@ -4,7 +4,7 @@ from pager.databases.models import Inventory, Player, Stuff
 from sqlalchemy.exc import SQLAlchemyError
 
 from pager.databases.requests.base import BaseRequest
-from pager.exeption.exeption import NotFoundError
+from pager.utils.exeption import NotFoundError
 
 
 class StuffRequest(BaseRequest[Stuff]): 

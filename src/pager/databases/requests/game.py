@@ -3,8 +3,7 @@ from sqlalchemy import func, select
 from pager.databases.models import Game, Player
 from pager.databases.requests.base import BaseRequest
 from sqlalchemy.exc import SQLAlchemyError
-
-from pager.exeption.exeption import NotFoundError
+from pager.utils.exeption import NotFoundError
 
 
 class GameRequest(BaseRequest[Game]):
@@ -65,5 +64,7 @@ class GameRequest(BaseRequest[Game]):
             .where(Player.id_tg == id_tg)
         )
         result = await session.execute(stmt)
+        if result is None:
+            raise NotFoundError()
         game = result.scalars().first()
         return game

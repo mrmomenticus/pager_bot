@@ -1,4 +1,4 @@
-from pager.exeption import exeption
+from pager.utils import exeption
 from pager import handlers, keyboards, databases, states
 from pager.utils import bot, configs, constants, logger
 

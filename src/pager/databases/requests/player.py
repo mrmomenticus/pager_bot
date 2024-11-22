@@ -5,7 +5,7 @@ from pager.databases.models import Player
 from pager.databases.requests.base import BaseRequest
 from sqlalchemy.exc import SQLAlchemyError
 
-from pager.exeption.exeption import NotFoundError
+from pager.utils.exeption import NotFoundError
 
 
 class PlayerRequest(BaseRequest[Player]):

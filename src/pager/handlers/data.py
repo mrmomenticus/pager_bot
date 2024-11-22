@@ -2,7 +2,7 @@ from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
 from pager import keyboards, states
 from pager.databases.requests.game import GameRequest
-from pager.exeption.exeption import NotFoundError
+from pager.utils.exeption import NotFoundError
 from pager.handlers.base import BaseHandler
 import re
 from pager.filter import Role
@@ -59,11 +59,11 @@ class DataPlayer:
     @staticmethod
     @data_route.message(F.text == "Когда игра?")
     async def cmd_when_game(message: types.Message):
-        date = await GameRequest.select_game_by_player_id(message.from_user.id)
-        if date is None:
+        game = await GameRequest.select_game_by_player_id(message.from_user.id)
+        if game.date is None:
             await message.answer("Даты игры не найдены")
         else:
             await message.answer(
-                f"Игра будет: {date.date.strftime('%d.%m.%Y')}",
+                f"Игра будет: {game.date.strftime('%d.%m.%Y')}",
                 reply_markup=keyboards.PlayerMenuButtons().get_keyboard(),
             )

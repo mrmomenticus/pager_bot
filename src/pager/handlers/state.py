@@ -6,7 +6,7 @@ from pager import keyboards, states
 from pager.databases.requests.player import PlayerRequest
 from aiogram.types import FSInputFile
 
-from pager.exeption.exeption import NotFoundError
+from pager.utils.exeption import NotFoundError
 from pager.filter import Role
 from pager.handlers.base import BaseHandler
 from pager.utils.notification import Notification

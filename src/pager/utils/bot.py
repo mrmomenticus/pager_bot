@@ -32,7 +32,7 @@ class PagerBot:
 
 
     async def start_bot(self) -> None:
-        await self.dp.start_polling(self.bot)
+        await self.dp.start_polling(self.bot, skip_updates=True)
 
 
 class BotManager:

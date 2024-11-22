@@ -1,4 +1,5 @@
 import logging
+import os
 from pager.utils.configs import cfg
 from logging.handlers import RotatingFileHandler
 
@@ -34,13 +35,15 @@ class LoggerConfigurator:
         handlers = []
 
         if self._rotate:
+            if not os.path.exists(self._path):
+                os.makedirs(self._path)
             log_handler = RotatingFileHandler(
-                f"{self._path}/all_log.log",
+                f"{self._path}/all_log_{os.getpid()}.log",
                 maxBytes=self._max_bytes,
                 backupCount=self._backup_count,
             )
         else:
-            log_handler = logging.FileHandler(f"{self._path}/all_log.log", mode="w")
+            log_handler = logging.FileHandler(f"{self._path}/all_log_{os.getpid()}.log", mode="w")
 
         log_handler.setLevel(self._get_level_from_string(cfg["logger"]["level"]))
         log_handler.setFormatter(self._setup_formatter())
