@@ -1,6 +1,9 @@
 from aiogram import F, Router, types
-from pager import keyboards
+from pager import keyboards, states
 from pager.filter import Role
+from aiogram.fsm.context import FSMContext
+
+from pager.handlers.voting import Voting
 
 
 class MainMenu:
@@ -36,6 +39,34 @@ class MainMenu:
         await message.answer(
             "Выберите действие",
             reply_markup=keyboards.AdminInventoryPlayers().get_keyboard(),
+        )
+
+    @staticmethod
+    @route_admin.message(F.text == "Быстрое голосование")
+    async def cmd_quick_voice(message: types.Message, state: FSMContext):
+        await message.answer("Отправте номер группы")
+        await state.set_state(states.QuickVoiceState.number_group)
+    
+    @staticmethod
+    @route_admin.message(states.QuickVoiceState.number_group, F.text)
+    async def cmd_voice(message: types.Message, state: FSMContext):
+        await state.update_data({"number_group": message.text})
+        await message.answer("Отправте вопрос")
+        await state.set_state(states.QuickVoiceState.question)
+    
+    @staticmethod
+    @route_admin.message(states.QuickVoiceState.question, F.text)
+    async def cmd_voice_complete(message: types.Message, state: FSMContext):
+        await state.update_data({"question": message.text})
+        data = await state.get_data()
+        await Voting().send_quick_poll(int(data["number_group"]), data["question"])
+
+    @staticmethod
+    @route_admin.message(F.text == "Данные игрока...")
+    async def cmd_data_players(message: types.Message):
+        await message.answer(
+            "Выберите действие",
+            reply_markup=keyboards.AdminDataPlayer().get_keyboard(),
         )
 
     @staticmethod

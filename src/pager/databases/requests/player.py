@@ -42,7 +42,7 @@ class PlayerRequest(BaseRequest[Player]):
         try:
             async with session.begin():
                 session.add(new_player)
-                session.add(Inventory(player_id=new_player.id_tg))
+                session.add(Inventory(player_id=new_player.id_tg, money=0))
                 await session.commit()
         except SQLAlchemyError as e:
             logging.error(e)

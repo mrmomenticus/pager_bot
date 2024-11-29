@@ -23,7 +23,7 @@ class PlayerMenuButtons:
         self._buttons = (
             KeyboardButton(text="Организация..."),
             KeyboardButton(text="Инвентарь и статы..."),
-#           KeyboardButton(text="Все по игре..."),
+            KeyboardButton(text="Игра..."),
 #           KeyboardButton(text="Справка..."),
         )
         self.builder = ReplyKeyboardBuilder()
@@ -104,7 +104,7 @@ class PlayerGame:
     def __init__(self, size: list = (2, 2)) -> None:
         self._buttons = (
             KeyboardButton(text="Список задания группы"),
-            KeyboardButton(text="Список знакомых НПС"),
+            KeyboardButton(text="NPC"),
             KeyboardButton(text="Назад"),
         )
         self.builder = ReplyKeyboardBuilder()
@@ -145,7 +145,8 @@ class AdminGame:
             KeyboardButton(text="Добавить NPC"),
             KeyboardButton(text="Добавить задание"),
             #            KeyboardButton(text="Список заданий"),
-            #            KeyboardButton(text="Список NPC"),
+            #KeyboardButton(text="Список NPC"),
+            KeyboardButton(text="Быстрое голосование"),
             KeyboardButton(text="Назад"),
         )
         self.builder = ReplyKeyboardBuilder()
@@ -221,3 +222,24 @@ class AdminInventoryPlayers(ReplyKeyboardBuilder):
             one_time_keyboard=False,
             input_field_placeholder="Выберите пункт меню...",
         )
+        
+        
+
+class QuickVote(ReplyKeyboardBuilder):
+    def __init__(self, size: list = (2, 2)) -> None:
+        self._buttons = (
+            KeyboardButton(text="Да"),
+            KeyboardButton(text="Нет"),
+        )
+        self.builder = ReplyKeyboardBuilder()
+        self.builder.add(*self._buttons)
+        self.builder.adjust(*size, True)
+
+    def get_keyboard(self):
+        return self.builder.as_markup(
+            resize_keyboard=True,
+            one_time_keyboard=True,
+            selective=True,
+            input_field_placeholder="Выберите ответ",
+        )
+        

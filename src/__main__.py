@@ -3,6 +3,7 @@ import logging
 from pager.utils.logger import LoggerConfigurator
 
 from pager.utils.bot import BotManager
+from pager.utils.globals import number_group
 
 from pager.databases.requests.base import BaseRequest
 from pager.handlers import (
@@ -14,7 +15,9 @@ from pager.handlers import (
     inventory,
     group,
     state,
-    stuff
+    stuff,
+    voting,
+    npc
 )
 
 
@@ -37,11 +40,14 @@ async def main():
             state.StateAdmin.info_router,
             state.StatePlayer.info_router,
             stuff.StuffAdmin.stuff_route,
-            stuff.StuffPlayer.stuff_route
+            stuff.StuffPlayer.stuff_route,
+            voting.Voting.voiting_router,
+            npc.NpcAdmin.npc_route,
+            npc.NpcPlayer.npc_route
+            
         ]
     )
     logging.debug("Start polling")
-
     await BaseRequest.init_database()
 
     await bot_manager.start_bot()

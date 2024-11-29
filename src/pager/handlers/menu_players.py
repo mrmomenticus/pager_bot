@@ -20,6 +20,14 @@ class MenuPlayers:
         await message.answer(
             "Что хотите?", reply_markup=keyboards.PlayerInventory().get_keyboard()
         )
+    
+    @staticmethod
+    @route_players.message(F.text == "Игра...")
+    async def cmd_game_players(message: types.Message):
+        await message.answer(
+            "Выберите действие",
+            reply_markup=keyboards.PlayerGame().get_keyboard(),
+        )
 
     @staticmethod
     @route_players.message(F.text == "Назад")

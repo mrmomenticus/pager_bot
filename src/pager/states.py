@@ -53,8 +53,16 @@ class AllInventoryPlayer(StatesGroup):
     name_player = State()
     ok = State()
     
-class AddNPCState(StatesGroup):
-    group_name = State()
-    npc_name = State()
+    
+class QuickVoiceState(StatesGroup):
+    number_group = State()
+    question = State()
+    
+    
+class NewNpcState(StatesGroup):
+    number_group = State()
+    name = State()
+    local = State()
     description = State()
+
     

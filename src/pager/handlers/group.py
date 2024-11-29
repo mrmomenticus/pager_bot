@@ -4,6 +4,7 @@ from pager import keyboards, states
 from pager.databases import models
 from pager.databases.requests.game import GameRequest
 from pager.utils.exeption import NotFoundError, handler_error
+from pager.utils.utility import get_name_all_players_from_group
 from pager.filter import Role
 from pager.handlers.base import BaseHandler
 
@@ -52,9 +53,7 @@ class GroupAdmin(BaseHandler):
     @group_router.message(states.OutputPlayersGroupState.number_group, F.text)
     async def cmd_output_players_in_group(message: types.Message):
         try:
-            players = await GameRequest.get_players_from_game(number_group=int(message.text))
-            for player in players:
-                await message.answer(f"Игрок: {player.player_name}")
+            await message.answer(get_name_all_players_from_group(message.text))
         except NotFoundError as e:
             await message.answer(f"{e}")
         except Exception as e:
