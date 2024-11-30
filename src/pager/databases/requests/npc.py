@@ -4,6 +4,7 @@ from sqlalchemy import select
 from pager.databases.models import Npc
 from pager.databases.requests.base import BaseRequest
 from sqlalchemy.exc import SQLAlchemyError
+from pager.utils.globals import number_group
 
 class NpcRequest(BaseRequest):
     @BaseRequest.connection
@@ -11,7 +12,7 @@ class NpcRequest(BaseRequest):
     async def add_npc(session, npc: dict):
         try:
             npc_model = Npc(
-                game_id=int(npc["number_group"]),
+                game_id=number_group,
                 name=npc["name"],
                 local=npc["local"],
                 description=npc["description"],

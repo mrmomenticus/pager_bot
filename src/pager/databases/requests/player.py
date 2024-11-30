@@ -96,3 +96,10 @@ class PlayerRequest(BaseRequest[Player]):
         stmt = select(Player).where(Player.is_admin.is_(True)) 
         result = await session.execute(stmt)
         return result.scalars().all()
+    
+    @BaseRequest.connection
+    @staticmethod
+    async def select_all_players(session):
+        stmt = select(Player)
+        result = await session.execute(stmt)
+        return result.scalars().all()

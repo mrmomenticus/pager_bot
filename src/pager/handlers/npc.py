@@ -5,6 +5,7 @@ from pager.filter import Role
 from aiogram.fsm.context import FSMContext
 
 from pager.utils.globals import number_group
+from pager.utils.notification import Notification
 
 
 class NpcAdmin:
@@ -14,12 +15,6 @@ class NpcAdmin:
     @staticmethod
     @npc_route.message(F.text == "Добавить NPC")
     async def cmd_add_group(message: types.Message, state: FSMContext):
-        await message.answer("Отправь номер группы")
-        await state.set_state(states.NewNpcState.number_group)
-
-    @staticmethod
-    @npc_route.message(states.NewNpcState.number_group, F.text)
-    async def cmd_add_name(message: types.Message, state: FSMContext):
         await message.answer("Имя NPC")
         await state.update_data(number_group=message.text)
         await state.set_state(states.NewNpcState.name)
@@ -53,6 +48,7 @@ class NpcAdmin:
             "NPC успешно добавлен",
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
         )
+        await Notification.notification_all_players(message_str="Новый знакомый: ", new_data=npc["name"])
         await state.clear()
 
 

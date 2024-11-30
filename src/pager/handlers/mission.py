@@ -5,6 +5,7 @@ from pager.filter import Role
 from aiogram.fsm.context import FSMContext
 
 from pager.utils.globals import number_group
+from pager.utils.notification import Notification
 
 
 class MissionAdmin:
@@ -46,6 +47,7 @@ class MissionAdmin:
             "Миссия успешно добавлена",
             reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
         )
+        await Notification.notification_all_players(message_str="Новое задание! Описание: ", new_data=mission["description"])
         await state.clear()
         
 class MissionPlayer:
