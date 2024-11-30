@@ -103,7 +103,7 @@ class PlayerGame:
 
     def __init__(self, size: list = (2, 2)) -> None:
         self._buttons = (
-            KeyboardButton(text="Список задания группы"),
+            KeyboardButton(text="Задания"),
             KeyboardButton(text="NPC"),
             KeyboardButton(text="Назад"),
         )

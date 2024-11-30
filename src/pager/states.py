@@ -65,4 +65,8 @@ class NewNpcState(StatesGroup):
     local = State()
     description = State()
 
+class AddMissionState(StatesGroup):
+    local = State()
+    description = State()
+    reward = State()
     

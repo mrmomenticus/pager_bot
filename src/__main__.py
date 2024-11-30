@@ -3,7 +3,6 @@ import logging
 from pager.utils.logger import LoggerConfigurator
 
 from pager.utils.bot import BotManager
-from pager.utils.globals import number_group
 
 from pager.databases.requests.base import BaseRequest
 from pager.handlers import (
@@ -17,7 +16,9 @@ from pager.handlers import (
     state,
     stuff,
     voting,
-    npc
+    npc,
+    mission
+    
 )
 
 
@@ -43,7 +44,9 @@ async def main():
             stuff.StuffPlayer.stuff_route,
             voting.Voting.voiting_router,
             npc.NpcAdmin.npc_route,
-            npc.NpcPlayer.npc_route
+            npc.NpcPlayer.npc_route,
+            mission.MissionPlayer.mission_route,
+            mission.MissionAdmin.mission_route
             
         ]
     )

@@ -47,6 +47,7 @@ class Game(BaseModel):
     npcs: Mapped[list["Npc"]] = relationship(back_populates="game")
     history_game: Mapped["HistoryGame"] = relationship(back_populates="game")
     help_game: Mapped["HelpGame"] = relationship(back_populates="game")
+    mission: Mapped[list["Mission"]] = relationship(back_populates="game")
 
     def __str__(self):
         return f"{self.date}"
@@ -87,6 +88,9 @@ class HistoryPlayer(BaseModel):
     __tablename__ = "HistoryPlayer"
     id: Mapped[int] = MappedColumn(Integer, primary_key=True, autoincrement=True)
     player_id: Mapped[int] = MappedColumn(Integer, ForeignKey("Players.id_tg"))
+    history: Mapped[str] = MappedColumn(String(10240))
+    
+   # player: Mapped["Player"] = relationship(back_populates="history_player")
     
 class HistoryGame(BaseModel):
     __tablename__ = "HistoryGame"
@@ -109,4 +113,14 @@ class HelpGame(BaseModel):
     
     game: Mapped["Game"] = relationship(back_populates="help_game")
     
+    
+class Mission(BaseModel):
+    __tablename__ = "Mission"
+    id: Mapped[int] = MappedColumn(Integer, primary_key=True, autoincrement=True)
+    game_id: Mapped[int] = MappedColumn(Integer, ForeignKey("Game.number_group"))
+    local: Mapped[str] = MappedColumn(String(255))
+    desctription: Mapped[str] = MappedColumn(String(6000))
+    reward: Mapped[str] = MappedColumn(String(255))
+    
+    game: Mapped["Game"] = relationship(back_populates="mission")
     
