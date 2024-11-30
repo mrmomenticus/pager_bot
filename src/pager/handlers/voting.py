@@ -5,7 +5,6 @@ from pager.databases.requests.player import PlayerRequest
 from pager.filter import Role
 from pager.handlers.base import BaseHandler
 from pager.utils.bot import BotManager
-from pager.keyboards import QuickVote
 from pager.databases.requests.game import GameRequest
 
 #TODO: Это костыль класс, надо изменять

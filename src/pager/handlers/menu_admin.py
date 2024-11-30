@@ -4,6 +4,7 @@ from pager.filter import Role
 from aiogram.fsm.context import FSMContext
 
 from pager.handlers.voting import Voting
+from pager.utils.globals import number_group
 
 
 class MainMenu:
@@ -44,13 +45,6 @@ class MainMenu:
     @staticmethod
     @route_admin.message(F.text == "Быстрое голосование")
     async def cmd_quick_voice(message: types.Message, state: FSMContext):
-        await message.answer("Отправте номер группы")
-        await state.set_state(states.QuickVoiceState.number_group)
-    
-    @staticmethod
-    @route_admin.message(states.QuickVoiceState.number_group, F.text)
-    async def cmd_voice(message: types.Message, state: FSMContext):
-        await state.update_data({"number_group": message.text})
         await message.answer("Отправте вопрос")
         await state.set_state(states.QuickVoiceState.question)
     
@@ -59,7 +53,8 @@ class MainMenu:
     async def cmd_voice_complete(message: types.Message, state: FSMContext):
         await state.update_data({"question": message.text})
         data = await state.get_data()
-        await Voting().send_quick_poll(int(data["number_group"]), data["question"])
+        await Voting().send_quick_poll(number_group, data["question"])
+        state = await state.clear()
 
     @staticmethod
     @route_admin.message(F.text == "Данные игрока...")
