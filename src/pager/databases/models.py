@@ -45,7 +45,6 @@ class Game(BaseModel):
 
     players: Mapped[list["Player"]] = relationship("Player", back_populates="game")
     npcs: Mapped[list["Npc"]] = relationship(back_populates="game")
-    history_game: Mapped["HistoryGame"] = relationship(back_populates="game")
     help_game: Mapped["HelpGame"] = relationship(back_populates="game")
     mission: Mapped[list["Mission"]] = relationship(back_populates="game")
 
@@ -81,35 +80,14 @@ class Npc(BaseModel):
     local: Mapped[str] = MappedColumn(String(255))
     description: Mapped[str] = MappedColumn(String(1024))
     
-
     game: Mapped["Game"] = relationship(back_populates="npcs")
-    
-class HistoryPlayer(BaseModel):
-    __tablename__ = "HistoryPlayer"
-    id: Mapped[int] = MappedColumn(Integer, primary_key=True, autoincrement=True)
-    player_id: Mapped[int] = MappedColumn(Integer, ForeignKey("Players.id_tg"))
-    history: Mapped[str] = MappedColumn(String(10240))
-    
-   # player: Mapped["Player"] = relationship(back_populates="history_player")
-    
-class HistoryGame(BaseModel):
-    __tablename__ = "HistoryGame"
-    id: Mapped[int] = MappedColumn(Integer, primary_key=True, autoincrement=True)
-    game_id: Mapped[int] = MappedColumn(Integer, ForeignKey("Game.number_group"))
-    date = MappedColumn(Date())
-    name: Mapped[str] = MappedColumn(String(255))
-    description: Mapped[str] = MappedColumn(String(56000))
-    
-    game: Mapped["Game"] = relationship(back_populates="history_game")
     
     
 class HelpGame(BaseModel):
     __tablename__ = "HelpGame"
     id: Mapped[int] = MappedColumn(Integer, primary_key=True, autoincrement=True)
     game_id: Mapped[int] = MappedColumn(Integer, ForeignKey("Game.number_group"))
-    path_map: Mapped[str] = MappedColumn(String(255))
-    path_pdf: Mapped[str] = MappedColumn(String(255))
-    path_img: Mapped[str] = MappedColumn(String(255))
+    path: Mapped[str] = MappedColumn(String(512))
     
     game: Mapped["Game"] = relationship(back_populates="help_game")
     

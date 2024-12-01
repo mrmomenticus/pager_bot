@@ -81,7 +81,12 @@ class StateAdmin(BaseHandler):
         except Exception:
             message.answer("Возникла ошибка. Попробуйте позже")
 
+        if player.photo_state is None:
+            await message.answer("Данных нет")
+            await state.clear()
+            return 
         for photo in player.photo_state:
+
             try:
                 photo_file = FSInputFile(photo)
                 await message.answer_photo(photo_file)

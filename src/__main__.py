@@ -17,7 +17,8 @@ from pager.handlers import (
     stuff,
     voting,
     npc,
-    mission
+    mission,
+    help_game
     
 )
 
@@ -46,7 +47,10 @@ async def main():
             npc.NpcAdmin.npc_route,
             npc.NpcPlayer.npc_route,
             mission.MissionPlayer.mission_route,
-            mission.MissionAdmin.mission_route
+            mission.MissionAdmin.mission_route,
+            help_game.HelpGameAdmin.help_route,
+            help_game.HelpGamePlayer.help_route
+            
             
         ]
     )

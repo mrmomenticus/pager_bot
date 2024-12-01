@@ -24,7 +24,7 @@ class PlayerMenuButtons:
             KeyboardButton(text="Организация..."),
             KeyboardButton(text="Инвентарь и статы..."),
             KeyboardButton(text="Игра..."),
-#           KeyboardButton(text="Справка..."),
+            KeyboardButton(text="Материалы игры"),
         )
         self.builder = ReplyKeyboardBuilder()
         self.builder.add(*self._buttons)
@@ -77,11 +77,9 @@ class PlayerInventory:
 
 
 class PlayerHelp:
-    def __init__(self, size: list = (3, 3)) -> None:
+    def __init__(self, size: list = (1, 1)) -> None:
         self._buttons = (
-            # KeyboardButton(text="Хронология игры"),
-            # KeyboardButton(text="Карта мира"),
-            # KeyboardButton(text="Правила игры"),
+            KeyboardButton(text="Материалы по игре"),
             KeyboardButton(text="Назад"),
         )
         self.builder = ReplyKeyboardBuilder()
@@ -126,6 +124,24 @@ class AdminMenuButtons:
             KeyboardButton(text="Игра..."),
             KeyboardButton(text="Информация по игрокам..."),
             KeyboardButton(text="Инвентарь игрока..."),
+            KeyboardButton(text="Справка..."),
+        )
+        self.builder = ReplyKeyboardBuilder()
+        self.builder.add(*self._buttons)
+        self.builder.adjust(*size, True)
+
+    def get_keyboard(self):
+        return self.builder.as_markup(
+            resize_keyboard=True,
+            one_time_keyboard=False,
+            input_field_placeholder="Выберите пункт меню...",
+        )
+class AdminHelp:
+    def __init__(self, size: list = (1, 1)) -> None:
+        self._buttons = (
+            KeyboardButton(text="Добавить материалы"),
+            KeyboardButton(text="Список материалов"),
+            KeyboardButton(text="Назад"),
         )
         self.builder = ReplyKeyboardBuilder()
         self.builder.add(*self._buttons)
@@ -138,14 +154,13 @@ class AdminMenuButtons:
             input_field_placeholder="Выберите пункт меню...",
         )
 
-
 class AdminGame:
-    def __init__(self, size: list = (2, 2)) -> None:
+    def __init__(self, size: list = (3, 3)) -> None:
         self._buttons = (
             KeyboardButton(text="Добавить NPC"),
             KeyboardButton(text="Добавить задание"),
-            #            KeyboardButton(text="Список заданий"),
-            #KeyboardButton(text="Список NPC"),
+            # KeyboardButton(text="Список заданий"),
+            #KeyboardButton(text="Список NPC"),"),
             KeyboardButton(text="Быстрое голосование"),
             KeyboardButton(text="Назад"),
         )

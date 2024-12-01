@@ -70,3 +70,6 @@ class AddMissionState(StatesGroup):
     description = State()
     reward = State()
     
+class AddHelpState(StatesGroup):
+    help = State()
+    
