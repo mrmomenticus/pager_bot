@@ -42,9 +42,11 @@ class DataAdmin(BaseHandler):
                 "Дата успешно добавлена",
                 reply_markup=keyboards.AdminMenuButtons().get_keyboard(),
             )
-            await Notification.notification_group(
-                int(data["number_group"]), "Обновление даты игры", message.text
-            )
+            #TODO: Раскомментировать 
+            # await Notification.notification_group(
+            #     int(data["number_group"]), "Обновление даты игры", message.text
+            # )
+            await Notification.notification_group_date(1, message.text)
             await state.clear()
         except NotFoundError as e:
             await message.answer(f"{e}")

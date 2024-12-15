@@ -98,6 +98,8 @@ class HelpGamePlayer:
     @help_route.message(F.text == "Материалы игры")
     async def help_game(message: types.Message):
         help = await HelpGameRequest.get_help(number_group)
+        if help == []:
+            await message.answer("Список материалов пуст")
         for i in help:
             try:
                 help_file = FSInputFile(i.path)
