@@ -4,7 +4,7 @@ from pager import keyboards, states
 from pager.databases.requests.stuff import StuffRequest
 from pager.databases.requests.player import PlayerRequest
 from pager.filter import Role
-from pager.handlers.base import BaseHandler
+from pager.commands.base import BaseHandler
 from pager.utils.notification import Notification
 
 

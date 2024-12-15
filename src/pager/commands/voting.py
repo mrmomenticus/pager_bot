@@ -3,7 +3,7 @@ from aiogram import F, Router, types
 from pager import keyboards
 from pager.databases.requests.player import PlayerRequest
 from pager.filter import Role
-from pager.handlers.base import BaseHandler
+from pager.commands.base import BaseHandler
 from pager.utils.bot import BotManager
 from pager.databases.requests.game import GameRequest
 

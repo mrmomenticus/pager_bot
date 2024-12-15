@@ -11,7 +11,7 @@ from aiogram import F, Router, types
 from pager.databases.requests.game import GameRequest
 from pager.databases.requests.player import PlayerRequest
 from pager.utils.exeption import NotFoundError, handler_error
-from pager.handlers.base import BaseHandler
+from pager.commands.base import BaseHandler
 from pager.utils.notification import Notification
 
 

@@ -3,7 +3,7 @@ from pager import keyboards, states
 from pager.filter import Role
 from aiogram.fsm.context import FSMContext
 
-from pager.handlers.voting import Voting
+from pager.commands.voting import Voting
 from pager.utils.globals import number_group
 
 

@@ -5,7 +5,7 @@ from pager.utils.logger import LoggerConfigurator
 from pager.utils.bot import BotManager
 
 from pager.databases.requests.base import BaseRequest
-from pager.handlers import (
+from pager.commands import (
     register,
     start,
     menu_admin,

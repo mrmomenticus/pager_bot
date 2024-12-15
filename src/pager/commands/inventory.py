@@ -6,7 +6,7 @@ from pager.databases.requests.inventory import InventoryRequest
 from pager.databases.requests.player import PlayerRequest
 from pager.databases.requests.stuff import StuffRequest
 from pager.filter import Role
-from pager.handlers.base import BaseHandler
+from pager.commands.base import BaseHandler
 from pager.utils.notification import Notification
 
 
