@@ -2,6 +2,26 @@ from aiogram.types import KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 
+class BaseButtons(ReplyKeyboardBuilder):
+    @classmethod
+    def _create_builder(self, buttons: tuple, size: list = (1,1)) -> ReplyKeyboardBuilder:
+        """
+        Создает ReplyKeyboardBuilder на основе переданных кнопок.
+
+        Args:
+        buttons (tuple): Кнопки, которые необходимо добавить в ReplyKeyboardBuilder.
+        size (list): Размер кнопок в ReplyKeyboardBuilder.
+
+        Returns:
+        ReplyKeyboardBuilder: ReplyKeyboardBuilder, который содержит переданные кнопки.
+        """
+        self._builder = ReplyKeyboardBuilder()
+        self._builder.add(*buttons)
+        self._builder.adjust(*size)
+        self._builder.as_markup(resize_keyboard=True, one_time_keyboard=False, input_field_placeholder="Выберите пункт меню...")
+        
+        return self._builder
+
 class RegistredButton(ReplyKeyboardBuilder):
     def __init__(self, size: list = (2, 2)) -> None:
         self._buttons = KeyboardButton(text="Зарегистрироваться")
@@ -17,228 +37,97 @@ class RegistredButton(ReplyKeyboardBuilder):
         )
 
 
-# Класс для вывода основго меню игрока.
-class PlayerMenuButtons:
-    def __init__(self, size: list = (2, 2)) -> None:
+class PlayerButtons(BaseButtons):
+
+    def main_menu(self) -> ReplyKeyboardBuilder:
+        self.size = (2, 2)
         self._buttons = (
-            KeyboardButton(text="Организация..."),
-            KeyboardButton(text="Инвентарь и статы..."),
-            KeyboardButton(text="Игра..."),
-            KeyboardButton(text="Материалы игры"),
+            KeyboardButton(text="Организация"),
+            KeyboardButton(text="Инвентарь"),
+            KeyboardButton(text="Статы"),
+            KeyboardButton(text="Мир игры"),
         )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
-
-    def get_keyboard(self):
-        return self.builder.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=False,
-            input_field_placeholder="Выберите пункт меню...",
-        )
-
-
-class PlayerOrganization:
-    def __init__(self, size: list = (2, 2)) -> None:
+        return self._create_builder(self._buttons, self.size)
+    
+    def organization(self) -> ReplyKeyboardBuilder:
+        self.size = (1, 2)
         self._buttons = (
             KeyboardButton(text="Когда игра?"),
+            KeyboardButton(text="Материалы игры"),
             KeyboardButton(text="Назад"),
         )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
-
-    def get_keyboard(self):
-        return self.builder.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=False,
-            input_field_placeholder="Выберите пункт меню...",
+        return self._create_builder(self._buttons, self.size)
+    
+    def inventory(self) -> ReplyKeyboardBuilder:
+        self.size = (1, 3)
+        self._buttons = (
+            KeyboardButton(text="Мои вещи"),
+            KeyboardButton(text="Мой кошелек"),
+            KeyboardButton(text="Назад"),
         )
-
-
-class PlayerInventory:
-    def __init__(self, size: list = (2, 2)) -> None:
+        return self._create_builder(self._buttons, self.size)
+    
+    def stats(self) -> ReplyKeyboardBuilder:
+        self.size = (1, 2)
         self._buttons = (
             KeyboardButton(text="Мои статы"),
-            KeyboardButton(text="Мои вещи"),
-            KeyboardButton(text="Мои деньги"),
             KeyboardButton(text="Назад"),
         )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
-
-    def get_keyboard(self):
-        return self.builder.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=False,
-            input_field_placeholder="Выберите пункт меню...",
-        )
-
-
-class PlayerHelp:
-    def __init__(self, size: list = (1, 1)) -> None:
+        return self._create_builder(self._buttons, self.size)
+    
+    def play_world(self) -> ReplyKeyboardBuilder:
+        self.size = (1, 5)
         self._buttons = (
-            KeyboardButton(text="Материалы по игре"),
-            KeyboardButton(text="Назад"),
-        )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
-
-    def get_keyboard(self):
-        return self.builder.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=False,
-            input_field_placeholder="Выберите пункт меню...",
-        )
-
-
-class PlayerGame:
-    """
-    Класс для вывода меню игрока в игре. Вызывается с помощь юкоманды "Игра..."
-    """
-
-    def __init__(self, size: list = (2, 2)) -> None:
-        self._buttons = (
-            KeyboardButton(text="Задания"),
+            KeyboardButton(text="Квесты"),
             KeyboardButton(text="NPC"),
             KeyboardButton(text="Назад"),
         )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
+        return self._create_builder(self._buttons, self.size)
 
-    def get_keyboard(self):
-        return self.builder.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=False,
-            input_field_placeholder="Выберите пункт меню...",
-        )
-
-
-class AdminMenuButtons:
-    def __init__(self, size: list = (1, 1, 1)) -> None:
+class AdminButtons(BaseButtons):
+    def main_menu(self) -> ReplyKeyboardBuilder:
+        self.size = (1, 3)
         self._buttons = (
-            KeyboardButton(text="Организация игры..."),
-            KeyboardButton(text="Игра..."),
-            KeyboardButton(text="Информация по игрокам..."),
-            KeyboardButton(text="Инвентарь игрока..."),
-            KeyboardButton(text="Справка..."),
+            KeyboardButton(text="Организация группы"),
+            KeyboardButton(text="Игроки"),
+            KeyboardButton(text="Мир игры"),
         )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
-
-    def get_keyboard(self):
-        return self.builder.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=False,
-            input_field_placeholder="Выберите пункт меню...",
-        )
-class AdminHelp:
-    def __init__(self, size: list = (1, 1)) -> None:
+        return self._create_builder(self._buttons, self.size)
+    
+    def organization(self) -> ReplyKeyboardBuilder:
+        self.size = (1, 1)
         self._buttons = (
-            KeyboardButton(text="Добавить материалы"),
+            KeyboardButton(text="Добавить дату игры"),
+            KeyboardButton(text="Добавить материалы игры"),
             KeyboardButton(text="Список материалов"),
+            KeyboardButton(text="Голосование"),
             KeyboardButton(text="Назад"),
         )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
-
-    def get_keyboard(self):
-        return self.builder.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=False,
-            input_field_placeholder="Выберите пункт меню...",
+        return self._create_builder(self._buttons, self.size)
+    
+    def players(self) -> ReplyKeyboardBuilder:
+        self.size = (1, 1)
+        self._buttons = (
+            KeyboardButton(text="Добавить вещь"),
+            KeyboardButton(text="Удалить вещь"),
+            KeyboardButton(text="Добавить денег"),
+            KeyboardButton(text="Забрать деньги"),
+            KeyboardButton(text="Узнать инвентарь"),
+            
+            KeyboardButton(text="Назад"),
         )
-
-class AdminGame:
-    def __init__(self, size: list = (3, 3)) -> None:
+        return self._create_builder(self._buttons, self.size)
+    
+    def play_world(self) -> ReplyKeyboardBuilder:
+        self.size = (1, 1)
         self._buttons = (
             KeyboardButton(text="Добавить NPC"),
             KeyboardButton(text="Добавить задание"),
-            # KeyboardButton(text="Список заданий"),
-            #KeyboardButton(text="Список NPC"),"),
-            KeyboardButton(text="Быстрое голосование"),
+            KeyboardButton(text="Список заданий"),
+            KeyboardButton(text="Список NPC"),
             KeyboardButton(text="Назад"),
         )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
-
-    def get_keyboard(self):
-        return self.builder.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=False,
-            input_field_placeholder="Выберите пункт меню...",
-        )
-
-
-class AdminOrganization:
-    def __init__(self, size: list = (1, 1)) -> None:
-        self._buttons = (
-            KeyboardButton(text="Добавить дату игры"),
-            KeyboardButton(text="Добавить группу"),
-            KeyboardButton(text="Список игроков группы"),
-            # KeyboardButton(text="Написать игроку"),
-            KeyboardButton(text="Назад"),
-        )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
-
-    def get_keyboard(self):
-        return self.builder.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=False,
-            input_field_placeholder="Выберите пункт меню...",
-        )
-
-
-class AdminInformationPlayer(ReplyKeyboardBuilder):
-    def __init__(self, size: list = (1, 1)) -> None:
-        self._buttons = (
-            KeyboardButton(text="Добавить информацию"),
-            KeyboardButton(text="Получить информацию"),
-            KeyboardButton(text="Удалить информацию"),
-            KeyboardButton(text="Назад"),
-        )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
-
-    def get_keyboard(self):
-        return self.builder.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=False,
-            input_field_placeholder="Выберите пункт меню...",
-        )
-
-
-class AdminInventoryPlayers(ReplyKeyboardBuilder):
-    def __init__(self, size: list = (2, 2)) -> None:
-        self._buttons = (
-            KeyboardButton(text="Добавить вещь"),
-            KeyboardButton(text="Добавить денег"),
-            KeyboardButton(text="Узнать инвентарь игрока"),
-            KeyboardButton(text="Удалить вещь"),
-            KeyboardButton(text="Забрать деньги"),
-            KeyboardButton(text="Назад"),
-        )
-        self.builder = ReplyKeyboardBuilder()
-        self.builder.add(*self._buttons)
-        self.builder.adjust(*size, True)
-
-    def get_keyboard(self):
-        return self.builder.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=False,
-            input_field_placeholder="Выберите пункт меню...",
-        )
-        
-        
+        return self._create_builder(self._buttons, self.size)
 
 class QuickVote(ReplyKeyboardBuilder):
     def __init__(self, size: list = (2, 2)) -> None:
