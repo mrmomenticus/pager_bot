@@ -4,7 +4,9 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 class BaseButtons(ReplyKeyboardBuilder):
     @classmethod
-    def _create_builder(self, buttons: tuple, size: list = (1,1)) -> ReplyKeyboardBuilder:
+    def _create_builder(
+        self, buttons: tuple, size: list = (1, 1)
+    ) -> ReplyKeyboardBuilder:
         """
         Создает ReplyKeyboardBuilder на основе переданных кнопок.
 
@@ -18,13 +20,18 @@ class BaseButtons(ReplyKeyboardBuilder):
         self._builder = ReplyKeyboardBuilder()
         self._builder.add(*buttons)
         self._builder.adjust(*size)
-        self._builder.as_markup(resize_keyboard=True, one_time_keyboard=False, input_field_placeholder="Выберите пункт меню...")
-        
+        self._builder.as_markup(
+            resize_keyboard=True,
+            one_time_keyboard=False,
+            input_field_placeholder="Выберите пункт меню...",
+        )
+
         return self._builder
+
 
 class RegistredButton(ReplyKeyboardBuilder):
     def __init__(self, size: list = (2, 2)) -> None:
-        self._buttons = KeyboardButton(text="Зарегистрироваться")
+        self._buttons = (KeyboardButton(text="Я ГМ"), KeyboardButton(text="Я игрок"))
         self.builder = ReplyKeyboardBuilder()
         self.builder.add(self._buttons)
         self.builder.adjust(*size)
@@ -38,7 +45,6 @@ class RegistredButton(ReplyKeyboardBuilder):
 
 
 class PlayerButtons(BaseButtons):
-
     def main_menu(self) -> ReplyKeyboardBuilder:
         self.size = (2, 2)
         self._buttons = (
@@ -48,7 +54,7 @@ class PlayerButtons(BaseButtons):
             KeyboardButton(text="Мир игры"),
         )
         return self._create_builder(self._buttons, self.size)
-    
+
     def organization(self) -> ReplyKeyboardBuilder:
         self.size = (1, 2)
         self._buttons = (
@@ -57,7 +63,7 @@ class PlayerButtons(BaseButtons):
             KeyboardButton(text="Назад"),
         )
         return self._create_builder(self._buttons, self.size)
-    
+
     def inventory(self) -> ReplyKeyboardBuilder:
         self.size = (1, 3)
         self._buttons = (
@@ -66,7 +72,7 @@ class PlayerButtons(BaseButtons):
             KeyboardButton(text="Назад"),
         )
         return self._create_builder(self._buttons, self.size)
-    
+
     def stats(self) -> ReplyKeyboardBuilder:
         self.size = (1, 2)
         self._buttons = (
@@ -74,7 +80,7 @@ class PlayerButtons(BaseButtons):
             KeyboardButton(text="Назад"),
         )
         return self._create_builder(self._buttons, self.size)
-    
+
     def play_world(self) -> ReplyKeyboardBuilder:
         self.size = (1, 5)
         self._buttons = (
@@ -83,6 +89,7 @@ class PlayerButtons(BaseButtons):
             KeyboardButton(text="Назад"),
         )
         return self._create_builder(self._buttons, self.size)
+
 
 class AdminButtons(BaseButtons):
     def main_menu(self) -> ReplyKeyboardBuilder:
@@ -93,7 +100,7 @@ class AdminButtons(BaseButtons):
             KeyboardButton(text="Мир игры"),
         )
         return self._create_builder(self._buttons, self.size)
-    
+
     def organization(self) -> ReplyKeyboardBuilder:
         self.size = (1, 1)
         self._buttons = (
@@ -104,7 +111,7 @@ class AdminButtons(BaseButtons):
             KeyboardButton(text="Назад"),
         )
         return self._create_builder(self._buttons, self.size)
-    
+
     def players(self) -> ReplyKeyboardBuilder:
         self.size = (1, 1)
         self._buttons = (
@@ -113,11 +120,10 @@ class AdminButtons(BaseButtons):
             KeyboardButton(text="Добавить денег"),
             KeyboardButton(text="Забрать деньги"),
             KeyboardButton(text="Узнать инвентарь"),
-            
             KeyboardButton(text="Назад"),
         )
         return self._create_builder(self._buttons, self.size)
-    
+
     def play_world(self) -> ReplyKeyboardBuilder:
         self.size = (1, 1)
         self._buttons = (
@@ -128,6 +134,7 @@ class AdminButtons(BaseButtons):
             KeyboardButton(text="Назад"),
         )
         return self._create_builder(self._buttons, self.size)
+
 
 class QuickVote(ReplyKeyboardBuilder):
     def __init__(self, size: list = (2, 2)) -> None:
@@ -146,4 +153,3 @@ class QuickVote(ReplyKeyboardBuilder):
             selective=True,
             input_field_placeholder="Выберите ответ",
         )
-        

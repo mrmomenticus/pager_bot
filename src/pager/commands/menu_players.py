@@ -1,6 +1,6 @@
 from aiogram import F, Router, types
-from pager import keyboards
-from pager.filter import Role
+from keyboards import keyboards
+from pager.middleware.filter import Role
 
 class MenuPlayers:
     route_players = Router()

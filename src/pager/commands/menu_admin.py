@@ -1,10 +1,11 @@
 from aiogram import F, Router, types
-from pager import keyboards, states
-from pager.filter import Role
+from pager.state import states
+from pager.middleware.filter import Role
 from aiogram.fsm.context import FSMContext
 
 from pager.commands.voting import Voting
 from pager.utils.globals import number_group
+from keyboards import keyboards
 
 
 class MainMenu:

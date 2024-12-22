@@ -2,15 +2,16 @@
 import logging
 import os
 from aiogram import F, types, Router
-from pager import keyboards, states
+from pager.state import states
 from pager.databases.requests.help_game import HelpGameRequest
 from pager.databases.requests.game import GameRequest
-from pager.filter import Role
+from pager.middleware.filter import Role
 from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile
 
 from pager.utils.globals import number_group
-from pager.utils.notification import Notification
+from keyboards import keyboards
+from pager.notification.notification import Notification
 
 
 class HelpGameAdmin:

@@ -1,4 +1,4 @@
-from pager.utils.constants import BOT_TOKEN
+from pager.utils.variables import BOT_TOKEN
 from aiogram import Bot, Dispatcher
 
 

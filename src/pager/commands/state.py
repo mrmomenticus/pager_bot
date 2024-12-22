@@ -2,14 +2,15 @@ import logging
 import os
 from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
-from pager import keyboards, states
+from pager.state import states
 from pager.databases.requests.player import PlayerRequest
 from aiogram.types import FSInputFile
 
 from pager.utils.exeption import NotFoundError
-from pager.filter import Role
+from pager.middleware.filter import Role
 from pager.commands.base import BaseHandler
-from pager.utils.notification import Notification
+from keyboards import keyboards
+from pager.notification.notification import Notification
 
 
 class StateAdmin(BaseHandler):

@@ -3,7 +3,7 @@ import logging
 import typing
 from sqlalchemy import Engine, func, select
 from pager.databases.models import BaseModel, Player
-from pager.utils import configs
+from pager.config import configs
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 

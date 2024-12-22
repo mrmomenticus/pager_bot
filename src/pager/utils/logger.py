@@ -1,6 +1,6 @@
 import logging
 import os
-from pager.utils.configs import cfg
+from pager.config.configs import cfg
 from logging.handlers import RotatingFileHandler
 
 

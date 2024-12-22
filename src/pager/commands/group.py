@@ -1,11 +1,12 @@
 from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
-from pager import keyboards, states
+from pager.state import states
 from pager.databases import models
 from pager.databases.requests.game import GameRequest
 from pager.utils.exeption import NotFoundError, handler_error
+from keyboards import keyboards
 from pager.utils.utility import get_name_all_players_from_group
-from pager.filter import Role
+from pager.middleware.filter import Role
 from pager.commands.base import BaseHandler
 
 class GroupAdmin(BaseHandler):

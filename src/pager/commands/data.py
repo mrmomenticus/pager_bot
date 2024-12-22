@@ -1,12 +1,13 @@
 from aiogram import F, types, Router
 from aiogram.fsm.context import FSMContext
-from pager import keyboards, states
+from pager.state import states
 from pager.databases.requests.game import GameRequest
 from pager.utils.exeption import NotFoundError
 from pager.commands.base import BaseHandler
 import re
-from pager.filter import Role
-from pager.utils.notification import Notification
+from pager.middleware.filter import Role
+from keyboards import keyboards
+from pager.notification.notification import Notification
 
 class DataAdmin(BaseHandler):
     data_route = Router()

@@ -1,10 +1,10 @@
 import logging
 from aiogram import F, Router, types
-from pager import keyboards
+from keyboards import keyboards
 from pager.databases.requests.player import PlayerRequest
-from pager.filter import Role
+from pager.middleware.filter import Role
 from pager.commands.base import BaseHandler
-from pager.utils.bot import BotManager
+from pager.bot.bot import BotManager
 from pager.databases.requests.game import GameRequest
 
 #TODO: Это костыль класс, надо изменять

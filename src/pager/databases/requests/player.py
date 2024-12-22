@@ -27,9 +27,6 @@ class PlayerRequest(BaseRequest[Player]):
                 stmt = select(Player).where(Player.player_name == data)
             result = await session.execute(stmt)
             player = result.scalars().first()
-            if player is None:
-                logging.warning(f"Такого игрока нет: {data}")
-                raise NotFoundError(data)
             return player
         except SQLAlchemyError as e:
             logging.error(e)
