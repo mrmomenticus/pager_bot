@@ -53,8 +53,8 @@ class GroupAdmin(BaseHandler):
     @group_router.message(states.OutputPlayersGroupState.number_group, F.text)
     async def cmd_output_players_in_group(message: types.Message):
         try:
-            await message.answer(get_name_all_players_from_group(message.text))
+            await message.answer(await get_name_all_players_from_group(int(message.text)))
         except NotFoundError as e:
             await message.answer(f"{e}")
         except Exception as e:
-            handler_error(e, message, states, message.text)
+            await handler_error(e, message, states, message.text)
